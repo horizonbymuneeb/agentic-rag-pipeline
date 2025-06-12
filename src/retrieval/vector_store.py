@@ -133,3 +133,5 @@ if __name__ == '__main__':
     
     for doc, score in results:
         print(f"Score: {score:.4f} - {doc.text}")
+
+# Optimize embedding batch processing throughput [2025-06-12T10:15:05]
