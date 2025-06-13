@@ -135,3 +135,5 @@ if __name__ == '__main__':
         print(f"Score: {score:.4f} - {doc.text}")
 
 # Optimize embedding batch processing throughput [2025-06-12T10:15:05]
+
+# Fix dangling reference in LangChain retriever [2025-06-13T18:20:45]
