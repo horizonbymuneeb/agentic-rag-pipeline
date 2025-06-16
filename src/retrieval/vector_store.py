@@ -137,3 +137,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2025-06-12T10:15:05]
 
 # Fix dangling reference in LangChain retriever [2025-06-13T18:20:45]
+
+# Add query cache with Redis backend [2025-06-16T11:28:41]
