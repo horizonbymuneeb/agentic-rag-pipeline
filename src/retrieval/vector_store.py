@@ -139,3 +139,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2025-06-13T18:20:45]
 
 # Add query cache with Redis backend [2025-06-16T11:28:41]
+
+# Implement cross-encoder reranking for better retrieval [2025-06-16T18:15:05]
