@@ -141,3 +141,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2025-06-16T11:28:41]
 
 # Implement cross-encoder reranking for better retrieval [2025-06-16T18:15:05]
+
+# Add reranking timeout fallback mechanism [2025-06-18T13:34:58]
