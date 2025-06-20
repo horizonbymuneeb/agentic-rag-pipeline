@@ -3,3 +3,4 @@
 [2025-06-16T11:28:41] Add query cache with Redis backend
 [2025-06-16T18:15:05] Implement cross-encoder reranking for better retrieval
 [2025-06-18T13:34:58] Add reranking timeout fallback mechanism
+[2025-06-20T14:08:24] Implement late interaction with ColBERT

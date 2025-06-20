@@ -143,3 +143,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2025-06-16T18:15:05]
 
 # Add reranking timeout fallback mechanism [2025-06-18T13:34:58]
+
+# Implement late interaction with ColBERT [2025-06-20T14:08:24]
