@@ -145,3 +145,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2025-06-18T13:34:58]
 
 # Implement late interaction with ColBERT [2025-06-20T14:08:24]
+
+# Fix connection pool timeout handling [2025-06-20T16:38:51]
