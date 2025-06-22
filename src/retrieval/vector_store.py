@@ -147,3 +147,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2025-06-20T14:08:24]
 
 # Fix connection pool timeout handling [2025-06-20T16:38:51]
+
+# Fix dangling reference in LangChain retriever [2025-06-22T15:59:55]

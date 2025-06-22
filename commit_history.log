@@ -5,3 +5,4 @@
 [2025-06-18T13:34:58] Add reranking timeout fallback mechanism
 [2025-06-20T14:08:24] Implement late interaction with ColBERT
 [2025-06-20T16:38:51] Fix connection pool timeout handling
+[2025-06-22T15:59:55] Fix dangling reference in LangChain retriever
