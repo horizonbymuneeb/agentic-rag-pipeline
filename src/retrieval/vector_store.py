@@ -149,3 +149,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2025-06-20T16:38:51]
 
 # Fix dangling reference in LangChain retriever [2025-06-22T15:59:55]
+
+# Add source document provenance tracking [2025-06-23T09:35:10]
