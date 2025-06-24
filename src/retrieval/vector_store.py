@@ -151,3 +151,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2025-06-22T15:59:55]
 
 # Add source document provenance tracking [2025-06-23T09:35:10]
+
+# Fix chunk overlap logic for markdown parser [2025-06-24T17:14:29]

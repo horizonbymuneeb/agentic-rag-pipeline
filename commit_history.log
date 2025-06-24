@@ -7,3 +7,4 @@
 [2025-06-20T16:38:51] Fix connection pool timeout handling
 [2025-06-22T15:59:55] Fix dangling reference in LangChain retriever
 [2025-06-23T09:35:10] Add source document provenance tracking
+[2025-06-24T17:14:29] Fix chunk overlap logic for markdown parser
