@@ -9,3 +9,4 @@
 [2025-06-23T09:35:10] Add source document provenance tracking
 [2025-06-24T17:14:29] Fix chunk overlap logic for markdown parser
 [2025-06-30T19:25:01] Implement parent-child document chunk linking
+[2025-06-30T09:39:49] Add cosine Similarity threshold configuration
