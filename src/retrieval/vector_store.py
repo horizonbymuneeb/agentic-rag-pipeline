@@ -157,3 +157,5 @@ if __name__ == '__main__':
 # Implement parent-child document chunk linking [2025-06-30T19:25:01]
 
 # Add cosine Similarity threshold configuration [2025-06-30T09:39:49]
+
+# Add semantic routing by query intent classification [2025-07-03T20:23:06]
