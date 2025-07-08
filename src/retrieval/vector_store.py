@@ -159,3 +159,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2025-06-30T09:39:49]
 
 # Add semantic routing by query intent classification [2025-07-03T20:23:06]
+
+# Add query cache with Redis backend [2025-07-08T15:25:29]
