@@ -163,3 +163,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2025-07-08T15:25:29]
 
 # Optimize embedding batch processing throughput [2025-07-08T11:18:18]
+
+# Add query rewrite using LLM for clarity [2025-07-09T17:44:54]
