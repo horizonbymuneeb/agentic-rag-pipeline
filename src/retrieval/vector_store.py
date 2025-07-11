@@ -165,3 +165,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2025-07-08T11:18:18]
 
 # Add query rewrite using LLM for clarity [2025-07-09T17:44:54]
+
+# Update Qdrant vector index schema for production [2025-07-11T17:45:07]
