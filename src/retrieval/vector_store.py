@@ -171,3 +171,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2025-07-15T10:30:21]
 
 # Implement cross-encoder reranking for better retrieval [2025-07-17T17:21:16]
+
+# Implement evaluation framework for RAG metrics [2025-07-18T09:07:37]
