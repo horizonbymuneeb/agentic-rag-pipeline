@@ -175,3 +175,5 @@ if __name__ == '__main__':
 # Implement evaluation framework for RAG metrics [2025-07-18T09:07:37]
 
 # Fix chunk overlap logic for markdown parser [2025-07-19T10:54:30]
+
+# Add cosine Similarity threshold configuration [2025-07-19T12:59:24]
