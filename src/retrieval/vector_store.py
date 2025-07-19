@@ -173,3 +173,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2025-07-17T17:21:16]
 
 # Implement evaluation framework for RAG metrics [2025-07-18T09:07:37]
+
+# Fix chunk overlap logic for markdown parser [2025-07-19T10:54:30]
