@@ -177,3 +177,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-07-19T10:54:30]
 
 # Add cosine Similarity threshold configuration [2025-07-19T12:59:24]
+
+# Refactor hybrid sparse-dense retrieval weights [2025-07-19T18:49:17]
