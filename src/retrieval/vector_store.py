@@ -187,3 +187,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2025-07-28T15:39:32]
 
 # Implement cross-encoder reranking for better retrieval [2025-07-29T20:42:26]
+
+# Update Qdrant vector index schema for production [2025-07-30T10:51:21]
