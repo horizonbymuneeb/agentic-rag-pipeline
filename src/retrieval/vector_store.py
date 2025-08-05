@@ -191,3 +191,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2025-07-30T10:51:21]
 
 # Fix duplicate chunk detection logic [2025-07-30T19:45:19]
+
+# Add reranking timeout fallback mechanism [2025-08-05T09:46:30]
