@@ -195,3 +195,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2025-08-05T09:46:30]
 
 # Add reranking timeout fallback mechanism [2025-08-05T18:13:39]
+
+# Update README with architecture diagram [2025-08-08T14:06:48]
