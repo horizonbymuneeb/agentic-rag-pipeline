@@ -30,3 +30,4 @@
 [2025-08-05T09:46:30] Add reranking timeout fallback mechanism
 [2025-08-05T18:13:39] Add reranking timeout fallback mechanism
 [2025-08-08T14:06:48] Update README with architecture diagram
+[2025-08-11T15:05:36] Add query rewrite using LLM for clarity
