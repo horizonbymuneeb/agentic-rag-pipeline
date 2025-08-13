@@ -199,3 +199,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2025-08-08T14:06:48]
 
 # Add query rewrite using LLM for clarity [2025-08-11T15:05:36]
+
+# Update tests for async retrieval paths [2025-08-13T19:02:06]
