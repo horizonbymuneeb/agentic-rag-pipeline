@@ -201,3 +201,5 @@ if __name__ == '__main__':
 # Add query rewrite using LLM for clarity [2025-08-11T15:05:36]
 
 # Update tests for async retrieval paths [2025-08-13T19:02:06]
+
+# Update Qdrant vector index schema for production [2025-08-14T14:18:48]
