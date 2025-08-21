@@ -205,3 +205,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2025-08-14T14:18:48]
 
 # Implement late interaction with ColBERT [2025-08-18T16:33:20]
+
+# Update README with architecture diagram [2025-08-21T15:18:51]
