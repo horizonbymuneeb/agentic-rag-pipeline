@@ -211,3 +211,5 @@ if __name__ == '__main__':
 # Implement query expansion with generated hypotheses [2025-08-22T13:22:38]
 
 # Optimize embedding batch processing throughput [2025-08-22T15:09:39]
+
+# Add source document provenance tracking [2025-08-22T16:11:57]
