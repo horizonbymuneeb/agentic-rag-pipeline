@@ -207,3 +207,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2025-08-18T16:33:20]
 
 # Update README with architecture diagram [2025-08-21T15:18:51]
+
+# Implement query expansion with generated hypotheses [2025-08-22T13:22:38]
