@@ -215,3 +215,5 @@ if __name__ == '__main__':
 # Add source document provenance tracking [2025-08-22T16:11:57]
 
 # Fix dangling reference in LangChain retriever [2025-08-25T15:14:52]
+
+# Add cosine Similarity threshold configuration [2025-08-25T12:54:11]
