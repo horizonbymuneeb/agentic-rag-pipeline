@@ -217,3 +217,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2025-08-25T15:14:52]
 
 # Add cosine Similarity threshold configuration [2025-08-25T12:54:11]
+
+# Add query rewrite using LLM for clarity [2025-08-25T13:37:53]
