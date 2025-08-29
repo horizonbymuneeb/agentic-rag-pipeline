@@ -223,3 +223,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2025-08-26T17:36:40]
 
 # Fix duplicate chunk detection logic [2025-08-26T19:56:27]
+
+# Fix chunk overlap logic for markdown parser [2025-08-29T12:48:59]
