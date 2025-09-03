@@ -227,3 +227,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-08-29T12:48:59]
 
 # Add cosine Similarity threshold configuration [2025-09-02T19:41:55]
+
+# Implement parent-child document chunk linking [2025-09-03T19:57:09]
