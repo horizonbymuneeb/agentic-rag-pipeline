@@ -231,3 +231,5 @@ if __name__ == '__main__':
 # Implement parent-child document chunk linking [2025-09-03T19:57:09]
 
 # Implement query expansion with generated hypotheses [2025-09-04T19:35:04]
+
+# Update tests for async retrieval paths [2025-09-05T13:02:44]
