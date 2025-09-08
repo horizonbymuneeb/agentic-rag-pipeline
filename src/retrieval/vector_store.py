@@ -235,3 +235,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2025-09-05T13:02:44]
 
 # Add source document provenance tracking [2025-09-07T12:38:57]
+
+# Add reranking timeout fallback mechanism [2025-09-08T18:57:18]
