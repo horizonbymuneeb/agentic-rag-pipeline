@@ -239,3 +239,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2025-09-08T18:57:18]
 
 # Implement evaluation framework for RAG metrics [2025-09-08T17:04:24]
+
+# Fix chunk overlap logic for markdown parser [2025-09-10T12:49:54]
