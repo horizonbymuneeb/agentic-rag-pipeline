@@ -241,3 +241,5 @@ if __name__ == '__main__':
 # Implement evaluation framework for RAG metrics [2025-09-08T17:04:24]
 
 # Fix chunk overlap logic for markdown parser [2025-09-10T12:49:54]
+
+# Add semantic routing by query intent classification [2025-09-10T15:27:46]
