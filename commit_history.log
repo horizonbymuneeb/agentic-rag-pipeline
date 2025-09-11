@@ -54,3 +54,4 @@
 [2025-09-10T12:49:54] Fix chunk overlap logic for markdown parser
 [2025-09-10T15:27:46] Add semantic routing by query intent classification
 [2025-09-11T16:46:01] Fix chunk overlap logic for markdown parser
+[2025-09-11T18:52:40] Refactor hybrid sparse-dense retrieval weights

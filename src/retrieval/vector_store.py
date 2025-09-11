@@ -245,3 +245,5 @@ if __name__ == '__main__':
 # Add semantic routing by query intent classification [2025-09-10T15:27:46]
 
 # Fix chunk overlap logic for markdown parser [2025-09-11T16:46:01]
+
+# Refactor hybrid sparse-dense retrieval weights [2025-09-11T18:52:40]
