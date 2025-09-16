@@ -56,3 +56,4 @@
 [2025-09-11T16:46:01] Fix chunk overlap logic for markdown parser
 [2025-09-11T18:52:40] Refactor hybrid sparse-dense retrieval weights
 [2025-09-11T09:53:30] Optimize embedding batch processing throughput
+[2025-09-16T13:04:02] Refactor hybrid sparse-dense retrieval weights
