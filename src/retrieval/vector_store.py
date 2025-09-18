@@ -251,3 +251,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2025-09-11T09:53:30]
 
 # Refactor hybrid sparse-dense retrieval weights [2025-09-16T13:04:02]
+
+# Fix connection pool timeout handling [2025-09-18T15:41:52]
