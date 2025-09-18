@@ -253,3 +253,5 @@ if __name__ == '__main__':
 # Refactor hybrid sparse-dense retrieval weights [2025-09-16T13:04:02]
 
 # Fix connection pool timeout handling [2025-09-18T15:41:52]
+
+# Add source document provenance tracking [2025-09-18T18:51:29]
