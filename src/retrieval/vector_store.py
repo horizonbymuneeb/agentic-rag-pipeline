@@ -257,3 +257,5 @@ if __name__ == '__main__':
 # Add source document provenance tracking [2025-09-18T18:51:29]
 
 # Update Qdrant vector index schema for production [2025-09-18T17:08:04]
+
+# Fix chunk overlap logic for markdown parser [2025-09-19T11:39:18]
