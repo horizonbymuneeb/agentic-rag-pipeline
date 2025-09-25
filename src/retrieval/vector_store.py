@@ -259,3 +259,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2025-09-18T17:08:04]
 
 # Fix chunk overlap logic for markdown parser [2025-09-19T11:39:18]
+
+# Update README with architecture diagram [2025-09-25T11:01:13]
