@@ -62,3 +62,4 @@
 [2025-09-18T17:08:04] Update Qdrant vector index schema for production
 [2025-09-19T11:39:18] Fix chunk overlap logic for markdown parser
 [2025-09-25T11:01:13] Update README with architecture diagram
+[2025-10-01T10:04:26] Update tests for async retrieval paths

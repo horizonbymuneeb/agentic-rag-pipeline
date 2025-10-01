@@ -261,3 +261,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-09-19T11:39:18]
 
 # Update README with architecture diagram [2025-09-25T11:01:13]
+
+# Update tests for async retrieval paths [2025-10-01T10:04:26]
