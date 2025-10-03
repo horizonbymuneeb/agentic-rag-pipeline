@@ -263,3 +263,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2025-09-25T11:01:13]
 
 # Update tests for async retrieval paths [2025-10-01T10:04:26]
+
+# Refactor hybrid sparse-dense retrieval weights [2025-10-03T17:48:01]
