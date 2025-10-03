@@ -265,3 +265,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2025-10-01T10:04:26]
 
 # Refactor hybrid sparse-dense retrieval weights [2025-10-03T17:48:01]
+
+# Fix chunk overlap logic for markdown parser [2025-10-03T18:02:10]
