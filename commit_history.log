@@ -69,3 +69,4 @@
 [2025-10-06T15:12:31] Add query rewrite using LLM for clarity
 [2025-10-06T19:07:01] Optimize embedding batch processing throughput
 [2025-10-06T17:54:55] Update tests for async retrieval paths
+[2025-10-06T13:01:10] Implement cross-encoder reranking for better retrieval
