@@ -267,3 +267,5 @@ if __name__ == '__main__':
 # Refactor hybrid sparse-dense retrieval weights [2025-10-03T17:48:01]
 
 # Fix chunk overlap logic for markdown parser [2025-10-03T18:02:10]
+
+# Implement query expansion with generated hypotheses [2025-10-06T17:23:38]
