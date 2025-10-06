@@ -269,3 +269,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-10-03T18:02:10]
 
 # Implement query expansion with generated hypotheses [2025-10-06T17:23:38]
+
+# Add query rewrite using LLM for clarity [2025-10-06T15:12:31]
