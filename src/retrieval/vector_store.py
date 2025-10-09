@@ -279,3 +279,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2025-10-06T13:01:10]
 
 # Fix connection pool timeout handling [2025-10-08T20:35:10]
+
+# Implement evaluation framework for RAG metrics [2025-10-09T10:44:39]
