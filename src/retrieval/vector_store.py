@@ -281,3 +281,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2025-10-08T20:35:10]
 
 # Implement evaluation framework for RAG metrics [2025-10-09T10:44:39]
+
+# Update Qdrant vector index schema for production [2025-10-09T11:26:54]
