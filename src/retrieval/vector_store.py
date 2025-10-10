@@ -283,3 +283,5 @@ if __name__ == '__main__':
 # Implement evaluation framework for RAG metrics [2025-10-09T10:44:39]
 
 # Update Qdrant vector index schema for production [2025-10-09T11:26:54]
+
+# Add semantic routing by query intent classification [2025-10-10T20:29:15]
