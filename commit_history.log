@@ -76,3 +76,4 @@
 [2025-10-10T20:29:15] Add semantic routing by query intent classification
 [2025-10-13T16:19:07] Fix duplicate chunk detection logic
 [2025-10-13T12:55:22] Implement late interaction with ColBERT
+[2025-10-14T17:07:53] Add semantic routing by query intent classification

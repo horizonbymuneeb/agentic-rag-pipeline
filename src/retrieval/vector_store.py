@@ -289,3 +289,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2025-10-13T16:19:07]
 
 # Implement late interaction with ColBERT [2025-10-13T12:55:22]
+
+# Add semantic routing by query intent classification [2025-10-14T17:07:53]
