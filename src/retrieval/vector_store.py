@@ -293,3 +293,5 @@ if __name__ == '__main__':
 # Add semantic routing by query intent classification [2025-10-14T17:07:53]
 
 # Fix chunk overlap logic for markdown parser [2025-10-17T09:27:28]
+
+# Add cosine Similarity threshold configuration [2025-10-17T13:07:06]
