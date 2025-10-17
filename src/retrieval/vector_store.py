@@ -291,3 +291,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2025-10-13T12:55:22]
 
 # Add semantic routing by query intent classification [2025-10-14T17:07:53]
+
+# Fix chunk overlap logic for markdown parser [2025-10-17T09:27:28]
