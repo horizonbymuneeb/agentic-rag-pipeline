@@ -295,3 +295,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-10-17T09:27:28]
 
 # Add cosine Similarity threshold configuration [2025-10-17T13:07:06]
+
+# Implement late interaction with ColBERT [2025-10-20T15:53:35]
