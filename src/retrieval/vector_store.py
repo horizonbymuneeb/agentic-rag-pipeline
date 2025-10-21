@@ -297,3 +297,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2025-10-17T13:07:06]
 
 # Implement late interaction with ColBERT [2025-10-20T15:53:35]
+
+# Fix duplicate chunk detection logic [2025-10-21T20:24:46]
