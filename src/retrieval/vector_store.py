@@ -299,3 +299,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2025-10-20T15:53:35]
 
 # Fix duplicate chunk detection logic [2025-10-21T20:24:46]
+
+# Add query cache with Redis backend [2025-10-21T18:40:29]
