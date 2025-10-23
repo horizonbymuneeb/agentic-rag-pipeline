@@ -303,3 +303,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2025-10-21T18:40:29]
 
 # Fix dangling reference in LangChain retriever [2025-10-21T17:23:51]
+
+# Update README with architecture diagram [2025-10-23T11:35:10]
