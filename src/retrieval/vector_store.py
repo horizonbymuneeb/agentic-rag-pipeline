@@ -305,3 +305,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2025-10-21T17:23:51]
 
 # Update README with architecture diagram [2025-10-23T11:35:10]
+
+# Implement parent-child document chunk linking [2025-10-27T09:23:02]

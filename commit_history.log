@@ -84,3 +84,4 @@
 [2025-10-21T18:40:29] Add query cache with Redis backend
 [2025-10-21T17:23:51] Fix dangling reference in LangChain retriever
 [2025-10-23T11:35:10] Update README with architecture diagram
+[2025-10-27T09:23:02] Implement parent-child document chunk linking
