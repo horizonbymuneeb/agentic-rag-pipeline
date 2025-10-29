@@ -307,3 +307,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2025-10-23T11:35:10]
 
 # Implement parent-child document chunk linking [2025-10-27T09:23:02]
+
+# Update tests for async retrieval paths [2025-10-29T18:50:39]
