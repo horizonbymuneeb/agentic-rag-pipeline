@@ -11,3 +11,23 @@ Public entry points:
 * :func:`src.ragpipe.grounding.ground_answer` -- token-overlap grounding check.
 * :func:`src.ragpipe.evaluation.evaluate_pipeline` -- recall@k and answer coverage.
 """
+
+from .bm25 import BM25Index, tokenize
+from .chunking import Chunk, Chunker, chunk_documents
+from .corpus import Document, build_corpus
+from .dense import DenseIndex, HashingTfIdfEmbedder
+from .fusion import HybridIndex, reciprocal_rank_fusion
+
+__all__ = [
+    "BM25Index",
+    "Chunk",
+    "Chunker",
+    "DenseIndex",
+    "Document",
+    "HashingTfIdfEmbedder",
+    "HybridIndex",
+    "build_corpus",
+    "chunk_documents",
+    "reciprocal_rank_fusion",
+    "tokenize",
+]
