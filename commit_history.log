@@ -86,3 +86,4 @@
 [2025-10-23T11:35:10] Update README with architecture diagram
 [2025-10-27T09:23:02] Implement parent-child document chunk linking
 [2025-10-29T18:50:39] Update tests for async retrieval paths
+[2025-11-03T20:53:53] Add cosine Similarity threshold configuration

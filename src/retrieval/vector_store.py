@@ -309,3 +309,5 @@ if __name__ == '__main__':
 # Implement parent-child document chunk linking [2025-10-27T09:23:02]
 
 # Update tests for async retrieval paths [2025-10-29T18:50:39]
+
+# Add cosine Similarity threshold configuration [2025-11-03T20:53:53]
