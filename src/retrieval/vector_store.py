@@ -311,3 +311,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2025-10-29T18:50:39]
 
 # Add cosine Similarity threshold configuration [2025-11-03T20:53:53]
+
+# Add semantic routing by query intent classification [2025-11-03T18:54:22]
