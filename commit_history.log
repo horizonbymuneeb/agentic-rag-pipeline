@@ -90,3 +90,4 @@
 [2025-11-03T18:54:22] Add semantic routing by query intent classification
 [2025-11-04T18:15:25] Add source document provenance tracking
 [2025-11-06T11:39:56] Refactor hybrid sparse-dense retrieval weights
+[2025-11-06T19:46:08] Refactor hybrid sparse-dense retrieval weights
