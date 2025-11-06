@@ -253,3 +253,27 @@ class RAGAgent:
 def answer_question(question: str, index: HybridIndex, config: PipelineConfig | None = None) -> AgentTrace:
     """One-shot helper: build an agent over ``index`` and answer ``question``."""
     return RAGAgent(index, config).run(question)
+
+
+def summarise_trace(trace: AgentTrace) -> dict[str, Any]:
+    """Compact view of a trace for logs and the evaluation report."""
+    return {
+        "question": trace.question,
+        "answer": trace.answer,
+        "citations": list(trace.citations),
+        "steps": trace.step_count,
+        "budget_exhausted": trace.budget_exhausted,
+        "rewritten": bool(trace.rewrite and trace.rewrite.rewritten),
+        "grounding": trace.grounding.coverage if trace.grounding else None,
+    }
+
+
+def compare_agents(questions: Sequence[str], index: HybridIndex, config: PipelineConfig) -> list[dict[str, Any]]:
+    """Run several questions through one agent and return compact traces."""
+    agent = RAGAgent(index, config)
+    return [summarise_trace(agent.run(question)) for question in questions]
+
+
+def step_kinds(trace: AgentTrace) -> list[str]:
+    """Sequence of step kinds, useful in assertions about the loop."""
+    return [step.kind for step in trace.steps]
