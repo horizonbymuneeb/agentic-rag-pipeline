@@ -323,3 +323,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2025-11-11T09:49:44]
 
 # Refactor hybrid sparse-dense retrieval weights [2025-11-12T13:13:17]
+
+# Add cosine Similarity threshold configuration [2025-11-15T09:20:01]
