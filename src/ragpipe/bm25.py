@@ -24,3 +24,14 @@ from .chunking import Chunk
 from .config import RetrievalConfig
 
 _TOKEN = re.compile(r"[a-z0-9]+")
+
+STOPWORDS: frozenset[str] = frozenset(
+    {
+        "a", "an", "and", "are", "as", "at", "be", "been", "but", "by", "can", "do", "does",
+        "for", "from", "had", "has", "have", "how", "if", "in", "into", "is", "it", "its",
+        "may", "more", "most", "no", "not", "of", "on", "or", "our", "so", "such", "than",
+        "that", "the", "their", "then", "there", "these", "they", "this", "those", "to",
+        "was", "we", "were", "what", "when", "where", "which", "while", "who", "why",
+        "will", "with", "would", "you", "your",
+    }
+)
