@@ -1,0 +1,45 @@
+# Configuration for the offline agentic RAG pipeline.
+# Every key maps to a field in src/ragpipe/config.py; unknown keys are rejected.
+
+chunking:
+  mode: sentence        # "sentence" keeps whole sentences; "fixed" cuts character windows
+  size: 320             # fixed mode only
+  overlap: 60           # fixed mode only, in characters
+  max_chars: 400        # sentence mode budget per chunk
+  overlap_sentences: 1  # sentence mode overlap
+  min_chars: 40
+
+retrieval:
+  bm25_k1: 1.5          # term-frequency saturation
+  bm25_b: 0.75          # document-length normalisation
+  top_k: 4              # results returned to the agent
+  candidate_k: 10       # per-retriever candidates before fusion
+  embedding_dim: 256    # hashing vector width
+  rrf_k: 60             # reciprocal rank fusion damping constant
+  bm25_weight: 1.0
+  dense_weight: 1.0
+  min_term_length: 2
+
+rewrite:
+  enabled: true
+  max_rounds: 2
+  max_new_terms: 2
+  coverage_threshold: 0.5
+  min_gap_frequency: 1
+
+agent:
+  max_steps: 8
+  top_k: 4
+  max_summary_sentences: 3
+  per_tool_step_cost: 1
+  require_grounding: true
+
+grounding:
+  support_threshold: 0.6   # token-overlap fraction needed to call a claim supported
+  min_claim_tokens: 3
+  max_claims: 8
+
+corpus_seed: 0
+corpus_path: null        # set to a directory of .md/.txt files to use a local corpus
+eval_k: 5
+run_name: agentic-rag
