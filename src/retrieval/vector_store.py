@@ -325,3 +325,5 @@ if __name__ == '__main__':
 # Refactor hybrid sparse-dense retrieval weights [2025-11-12T13:13:17]
 
 # Add cosine Similarity threshold configuration [2025-11-15T09:20:01]
+
+# Add semantic routing by query intent classification [2025-11-19T16:21:32]
