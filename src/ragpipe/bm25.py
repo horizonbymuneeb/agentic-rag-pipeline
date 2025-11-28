@@ -35,3 +35,28 @@ STOPWORDS: frozenset[str] = frozenset(
         "will", "with", "would", "you", "your",
     }
 )
+
+
+class BM25Error(ValueError):
+    """Raised when the index is queried before being built or with bad parameters."""
+
+
+@dataclass(frozen=True)
+class RetrievalHit:
+    """One retrieved chunk with its score and 1-based rank."""
+
+    chunk_id: str
+    score: float
+    rank: int
+    source: str
+
+    def as_dict(self) -> dict[str, Any]:
+        return {"chunk_id": self.chunk_id, "score": round(self.score, 6), "rank": self.rank, "source": self.source}
+
+
+def tokenize(text: str, min_length: int = 2) -> list[str]:
+    """Lowercase alphanumeric tokens with stopwords and short tokens removed."""
+    if min_length < 1:
+        raise BM25Error(f"min_length must be >= 1, got {min_length}")
+    tokens = _TOKEN.findall(text.lower())
+    return [token for token in tokens if len(token) >= min_length and token not in STOPWORDS]
