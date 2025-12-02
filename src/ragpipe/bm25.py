@@ -263,3 +263,27 @@ def describe_index(index: BM25Index) -> dict[str, Any]:
     terms = sorted(index.vocabulary, key=lambda term: (-index.inverse_document_frequency(term), term))[:10]
     stats["top_idf_terms"] = terms
     return stats
+
+
+def compare_queries(index: BM25Index, queries: Sequence[str], k: int = 3) -> dict[str, list[str]]:
+    """Map each query to its top chunk ids, for eyeballing retrieval changes."""
+    return {query: [hit.chunk_id for hit in index.search(query, k)] for query in queries}
+
+
+def term_overlap(first: Iterable[str], second: Iterable[str]) -> float:
+    """Jaccard overlap of two token lists (used by the rewriting loop)."""
+    left, right = set(first), set(second)
+    if not left or not right:
+        return 0.0
+    return len(left & right) / len(left | right)
+
+
+def score_breakdown(index: BM25Index, query: str, chunk_id: str) -> Mapping[str, float]:
+    """Per-term BM25 contributions for one chunk; useful when a ranking surprises you."""
+    index.stats()  # raises if the index was never built
+    position = next(
+        (pos for pos, chunk in enumerate(index.chunks) if chunk.chunk_id == chunk_id), None
+    )
+    if position is None:
+        raise BM25Error(f"unknown chunk id {chunk_id!r}")
+    return {term: index.term_score(term, position) for term in tokenize(query, index._min_length)}

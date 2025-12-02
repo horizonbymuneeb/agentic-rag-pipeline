@@ -66,3 +66,22 @@ def pipeline_config() -> PipelineConfig:
 def chunks(documents: list[Document], pipeline_config: PipelineConfig) -> list[Chunk]:
     """Sentence-aware chunks of the built-in corpus."""
     return Chunker(pipeline_config.chunking).split_documents(documents)
+
+
+@pytest.fixture
+def hybrid_index(chunks: list[Chunk], pipeline_config: PipelineConfig) -> HybridIndex:
+    """Hybrid index over the built-in corpus."""
+    return HybridIndex(pipeline_config.retrieval).build(chunks)
+
+
+@pytest.fixture
+def corpus_chunks(documents: list[Document]) -> list[Chunk]:
+    """Sentence chunks with generous character budget: one chunk per page."""
+    config = ChunkConfig(mode="sentence", max_chars=2000, overlap_sentences=0, min_chars=20)
+    return Chunker(config).split_documents(documents)
+
+
+@pytest.fixture
+def small_agent_config() -> AgentConfig:
+    """Tight step budget so the guard is exercised."""
+    return AgentConfig(max_steps=4, top_k=3, max_summary_sentences=2)
