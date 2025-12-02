@@ -20,3 +20,31 @@ from src.ragpipe.config import (  # noqa: E402
 )
 from src.ragpipe.corpus import Document, build_corpus  # noqa: E402
 from src.ragpipe.fusion import HybridIndex  # noqa: E402
+
+
+def make_chunk(index: int, text: str, doc_id: str = "doc", chunk_id: str | None = None) -> Chunk:
+    """Chunk helper used by several test modules."""
+    return Chunk(
+        chunk_id=chunk_id or f"{doc_id}::c{index}",
+        doc_id=doc_id,
+        index=index,
+        text=text,
+        start=0,
+        end=len(text),
+    )
+
+
+@pytest.fixture
+def toy_chunks() -> list[Chunk]:
+    """Three short chunks with known term frequencies (see test_bm25)."""
+    return [
+        make_chunk(0, "alpha beta beta"),
+        make_chunk(1, "beta gamma"),
+        make_chunk(2, "delta epsilon"),
+    ]
+
+
+@pytest.fixture
+def bm25_config() -> RetrievalConfig:
+    """BM25 config with length normalisation off, so scores are easy to compute."""
+    return RetrievalConfig(bm25_k1=1.5, bm25_b=0.0, top_k=3, candidate_k=5, embedding_dim=256)
