@@ -337,3 +337,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2025-12-02T18:44:47]
 
 # Update README with architecture diagram [2025-12-02T10:31:27]
+
+# Implement late interaction with ColBERT [2025-12-02T17:45:55]
