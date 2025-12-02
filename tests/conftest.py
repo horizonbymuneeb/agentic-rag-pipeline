@@ -48,3 +48,21 @@ def toy_chunks() -> list[Chunk]:
 def bm25_config() -> RetrievalConfig:
     """BM25 config with length normalisation off, so scores are easy to compute."""
     return RetrievalConfig(bm25_k1=1.5, bm25_b=0.0, top_k=3, candidate_k=5, embedding_dim=256)
+
+
+@pytest.fixture
+def documents() -> list[Document]:
+    """The built-in offline corpus (eight technical pages)."""
+    return build_corpus(seed=0)
+
+
+@pytest.fixture
+def pipeline_config() -> PipelineConfig:
+    """Default pipeline configuration."""
+    return PipelineConfig()
+
+
+@pytest.fixture
+def chunks(documents: list[Document], pipeline_config: PipelineConfig) -> list[Chunk]:
+    """Sentence-aware chunks of the built-in corpus."""
+    return Chunker(pipeline_config.chunking).split_documents(documents)

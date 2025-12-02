@@ -248,3 +248,18 @@ class BM25Index:
             if chunk.chunk_id == chunk_id:
                 return chunk
         raise BM25Error(f"unknown chunk id {chunk_id!r}")
+
+
+def build_index(
+    chunks: Sequence[Chunk], config: RetrievalConfig | None = None
+) -> BM25Index:
+    """Module-level helper mirroring ``BM25Index.from_chunks``."""
+    return BM25Index.from_chunks(chunks, config)
+
+
+def describe_index(index: BM25Index) -> dict[str, Any]:
+    """Stats plus the ten highest-idf terms, for the CLI's corpus summary."""
+    stats = index.stats().as_dict()
+    terms = sorted(index.vocabulary, key=lambda term: (-index.inverse_document_frequency(term), term))[:10]
+    stats["top_idf_terms"] = terms
+    return stats
