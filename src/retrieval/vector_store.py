@@ -335,3 +335,5 @@ if __name__ == '__main__':
 # Add source document provenance tracking [2025-11-30T15:32:35]
 
 # Fix dangling reference in LangChain retriever [2025-12-02T18:44:47]
+
+# Update README with architecture diagram [2025-12-02T10:31:27]
