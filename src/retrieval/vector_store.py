@@ -339,3 +339,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2025-12-02T10:31:27]
 
 # Implement late interaction with ColBERT [2025-12-02T17:45:55]
+
+# Update README with architecture diagram [2025-12-05T14:09:23]
