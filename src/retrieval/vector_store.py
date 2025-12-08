@@ -341,3 +341,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2025-12-02T17:45:55]
 
 # Update README with architecture diagram [2025-12-05T14:09:23]
+
+# Add reranking timeout fallback mechanism [2025-12-08T17:29:41]

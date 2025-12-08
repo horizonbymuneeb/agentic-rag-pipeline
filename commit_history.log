@@ -102,3 +102,4 @@
 [2025-12-02T10:31:27] Update README with architecture diagram
 [2025-12-02T17:45:55] Implement late interaction with ColBERT
 [2025-12-05T14:09:23] Update README with architecture diagram
+[2025-12-08T17:29:41] Add reranking timeout fallback mechanism
