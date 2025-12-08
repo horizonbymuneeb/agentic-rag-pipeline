@@ -85,3 +85,15 @@ def corpus_chunks(documents: list[Document]) -> list[Chunk]:
 def small_agent_config() -> AgentConfig:
     """Tight step budget so the guard is exercised."""
     return AgentConfig(max_steps=4, top_k=3, max_summary_sentences=2)
+
+
+@pytest.fixture
+def strict_grounding_config() -> GroundingConfig:
+    """Grounding config with a high support threshold."""
+    return GroundingConfig(support_threshold=0.8, min_claim_tokens=3, max_claims=5)
+
+
+@pytest.fixture
+def one_round_rewrite() -> RewriteConfig:
+    """Rewriting enabled for a single round."""
+    return RewriteConfig(enabled=True, max_rounds=1, max_new_terms=2, coverage_threshold=0.5)
