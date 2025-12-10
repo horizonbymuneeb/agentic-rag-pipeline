@@ -343,3 +343,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2025-12-05T14:09:23]
 
 # Add reranking timeout fallback mechanism [2025-12-08T17:29:41]
+
+# Implement cross-encoder reranking for better retrieval [2025-12-10T19:11:19]
