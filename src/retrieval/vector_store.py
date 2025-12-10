@@ -345,3 +345,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2025-12-08T17:29:41]
 
 # Implement cross-encoder reranking for better retrieval [2025-12-10T19:11:19]
+
+# Implement query expansion with generated hypotheses [2025-12-10T09:45:20]
