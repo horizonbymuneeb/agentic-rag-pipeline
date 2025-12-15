@@ -214,3 +214,51 @@ def chunk_document(document: Document, config: ChunkConfig) -> list[Chunk]:
         )
         for chunk in raw
     ]
+
+
+def chunk_documents(documents: Iterable[Document], config: ChunkConfig | None = None) -> list[Chunk]:
+    """Chunk every document, preserving order and rejecting duplicate ids."""
+    cfg = config or ChunkConfig()
+    chunks: list[Chunk] = []
+    seen: set[str] = set()
+    for document in documents:
+        for chunk in chunk_document(document, cfg):
+            if chunk.chunk_id in seen:
+                raise ChunkError(f"duplicate chunk id {chunk.chunk_id!r}")
+            seen.add(chunk.chunk_id)
+            chunks.append(chunk)
+    if not chunks:
+        raise ChunkError("no chunks produced from the given documents")
+    return chunks
+
+
+def overlap_ratio(chunks: Sequence[Chunk]) -> float:
+    """Average fraction of a chunk's characters that also appear in its predecessor.
+
+    Useful as a sanity check that the configured overlap is real; near-zero means
+    the chunks do not share text.
+    """
+    pairs = [(a, b) for a, b in zip(chunks, chunks[1:]) if a.doc_id == b.doc_id]
+    if not pairs:
+        return 0.0
+    ratios: list[float] = []
+    for first, second in pairs:
+        tail = first.text[-max(1, len(first.text) // 2) :]
+        shared = sum(1 for char in set(tail) if char in second.text)
+        ratios.append(shared / len(set(tail)))
+    return sum(ratios) / len(ratios)
+
+
+def chunk_statistics(chunks: Sequence[Chunk]) -> dict[str, Any]:
+    """Length and provenance summary printed by the CLI."""
+    if not chunks:
+        raise ChunkError("no chunks")
+    lengths = [chunk.length for chunk in chunks]
+    return {
+        "chunks": len(chunks),
+        "documents": len({chunk.doc_id for chunk in chunks}),
+        "mean_chars": round(sum(lengths) / len(lengths), 1),
+        "min_chars": min(lengths),
+        "max_chars": max(lengths),
+        "total_chars": sum(lengths),
+    }
