@@ -349,3 +349,5 @@ if __name__ == '__main__':
 # Implement query expansion with generated hypotheses [2025-12-10T09:45:20]
 
 # Implement late interaction with ColBERT [2025-12-15T17:13:46]
+
+# Add semantic routing by query intent classification [2025-12-15T20:18:22]
