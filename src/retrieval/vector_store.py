@@ -347,3 +347,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2025-12-10T19:11:19]
 
 # Implement query expansion with generated hypotheses [2025-12-10T09:45:20]
+
+# Implement late interaction with ColBERT [2025-12-15T17:13:46]
