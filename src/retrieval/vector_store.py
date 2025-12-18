@@ -353,3 +353,5 @@ if __name__ == '__main__':
 # Add semantic routing by query intent classification [2025-12-15T20:18:22]
 
 # Fix duplicate chunk detection logic [2025-12-15T18:14:56]
+
+# Update tests for async retrieval paths [2025-12-18T15:58:22]

@@ -108,3 +108,4 @@
 [2025-12-15T17:13:46] Implement late interaction with ColBERT
 [2025-12-15T20:18:22] Add semantic routing by query intent classification
 [2025-12-15T18:14:56] Fix duplicate chunk detection logic
+[2025-12-18T15:58:22] Update tests for async retrieval paths
