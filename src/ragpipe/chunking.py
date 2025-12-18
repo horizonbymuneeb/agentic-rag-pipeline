@@ -262,3 +262,33 @@ def chunk_statistics(chunks: Sequence[Chunk]) -> dict[str, Any]:
         "max_chars": max(lengths),
         "total_chars": sum(lengths),
     }
+
+
+class Chunker:
+    """Configured chunker: one object that turns documents into chunks.
+
+    The module-level functions are the primitives; this class is what the CLI and
+    the pipeline assembly use, so the chunking configuration travels with the
+    behaviour instead of being passed at every call site.
+    """
+
+    def __init__(self, config: ChunkConfig | None = None) -> None:
+        self.config = config or ChunkConfig()
+
+    def split_document(self, document: Document) -> list[Chunk]:
+        """Chunk one document."""
+        return chunk_document(document, self.config)
+
+    def split_documents(self, documents: Iterable[Document]) -> list[Chunk]:
+        """Chunk several documents in order."""
+        return chunk_documents(documents, self.config)
+
+    def split_text(self, text: str, doc_id: str = "inline") -> list[Chunk]:
+        """Chunk a bare string (used by the tests and ad-hoc probes)."""
+        return chunk_document(Document(doc_id=doc_id, title=doc_id, text=text), self.config)
+
+    def describe(self) -> dict[str, Any]:
+        """The configuration in effect, for the run log."""
+        payload = self.config.to_dict()
+        payload["mode"] = self.config.mode
+        return payload
