@@ -46,3 +46,31 @@ def test_agent_answers_question_with_evidence(hybrid_index: HybridIndex, pipelin
     assert "ground" in kinds
     assert trace.grounding is not None
     assert 0.0 <= trace.grounding.coverage <= 1.0
+
+
+def test_agent_steps_are_numbered_and_serialise(hybrid_index: HybridIndex) -> None:
+    agent = RAGAgent(hybrid_index)
+    trace = agent.run("How does reciprocal rank fusion combine ranked lists?")
+    assert [step.index for step in trace.steps] == list(range(1, trace.step_count + 1))
+    payload = trace.as_dict()
+    assert payload["question"] == trace.question
+    assert payload["step_count"] == trace.step_count
+    assert isinstance(payload["steps"][0], dict)
+    assert payload["rewrite"] is not None
+
+
+def test_step_budget_is_enforced(hybrid_index: HybridIndex) -> None:
+    config = PipelineConfig(agent=AgentConfig(max_steps=2, top_k=2, max_summary_sentences=1))
+    agent = RAGAgent(hybrid_index, config)
+    trace = agent.run("How does reciprocal rank fusion work?")
+    assert trace.step_count <= 2
+    assert trace.answer
+
+
+def test_rewrite_disabled_removes_rewrite_steps(hybrid_index: HybridIndex) -> None:
+    config = PipelineConfig(rewrite=RewriteConfig(enabled=False))
+    trace = RAGAgent(hybrid_index, config).run("What is recall at k?")
+    assert trace.rewrite is not None
+    assert trace.rewrite.stopped_reason == "disabled"
+    assert trace.rewrite.round_count == 0
+    assert "rewrite_round" not in step_kinds(trace)
