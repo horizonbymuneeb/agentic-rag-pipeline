@@ -355,3 +355,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2025-12-15T18:14:56]
 
 # Update tests for async retrieval paths [2025-12-18T15:58:22]
+
+# Optimize embedding batch processing throughput [2025-12-24T13:40:45]
