@@ -357,3 +357,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2025-12-18T15:58:22]
 
 # Optimize embedding batch processing throughput [2025-12-24T13:40:45]
+
+# Fix chunk overlap logic for markdown parser [2025-12-24T09:23:10]
