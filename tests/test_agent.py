@@ -74,3 +74,23 @@ def test_rewrite_disabled_removes_rewrite_steps(hybrid_index: HybridIndex) -> No
     assert trace.rewrite.stopped_reason == "disabled"
     assert trace.rewrite.round_count == 0
     assert "rewrite_round" not in step_kinds(trace)
+
+
+def test_lookup_branch_runs_for_missing_terms(hybrid_index: HybridIndex) -> None:
+    agent = RAGAgent(hybrid_index)
+    trace = agent.run("What does k1 control for zzqq?")
+    kinds = step_kinds(trace)
+    assert "lookup" in kinds
+    lookup_step = next(step for step in trace.steps if step.kind == "lookup")
+    assert "zzqq" in lookup_step.detail
+
+
+def test_empty_question_raises(hybrid_index: HybridIndex) -> None:
+    agent = RAGAgent(hybrid_index)
+    with pytest.raises(AgentError):
+        agent.run("   ")
+
+
+def test_agent_requires_non_empty_index() -> None:
+    with pytest.raises(AgentError, match="non-empty index"):
+        RAGAgent(HybridIndex())

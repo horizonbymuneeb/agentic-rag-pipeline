@@ -59,3 +59,47 @@ def build_pipeline(config: PipelineConfig | None = None) -> Pipeline:
     index = HybridIndex(cfg.retrieval).build(chunks)
     agent = RAGAgent(index, cfg, tools=build_default_tools(index, cfg.agent.max_summary_sentences))
     return Pipeline(config=cfg, documents=documents, chunks=chunks, index=index, agent=agent)
+
+
+def summarize_pipeline(pipeline: Pipeline) -> dict[str, Any]:
+    """Corpus, chunk and index statistics in one dict."""
+    return {
+        "corpus": corpus_statistics(pipeline.documents),
+        "chunks": chunk_statistics(pipeline.chunks),
+        "index": pipeline.index.stats(),
+        "tools": tool_summary(pipeline.agent.tools),
+    }
+
+
+def main(argv: Iterable[str] | None = None) -> int:
+    """``python -m src.ragpipe.cli --query ...`` / ``--eval`` / ``--stats``."""
+    parser = argparse.ArgumentParser(description="Offline agentic RAG pipeline over a local corpus.")
+    parser.add_argument("--config", default="config.yaml", help="path to the YAML configuration")
+    parser.add_argument("--query", action="append", default=None, help="question to answer (repeatable)")
+    parser.add_argument("--eval", action="store_true", help="run the offline evaluation set")
+    parser.add_argument("--stats", action="store_true", help="print corpus and index statistics")
+    parser.add_argument("--out", default=None, help="write the JSON result to this path")
+    args = parser.parse_args(list(argv) if argv is not None else None)
+
+    config_path = Path(args.config)
+    config = load_config(config_path) if config_path.exists() else PipelineConfig()
+    pipeline = build_pipeline(config)
+    output: dict[str, Any] = {}
+    if args.stats or not (args.query or args.eval):
+        output["stats"] = summarize_pipeline(pipeline)
+    if args.eval:
+        output["evaluation"] = pipeline.evaluate().as_dict()
+    if args.query:
+        output["answers"] = [pipeline.ask(question) for question in args.query]
+
+    text = json.dumps(output, indent=2, sort_keys=False)
+    if args.out:
+        Path(args.out).write_text(text, encoding="utf-8")
+        print(f"wrote {args.out}")
+    else:
+        print(text)
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover - exercised through make targets
+    raise SystemExit(main())
