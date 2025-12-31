@@ -359,3 +359,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2025-12-24T13:40:45]
 
 # Fix chunk overlap logic for markdown parser [2025-12-24T09:23:10]
+
+# Fix duplicate chunk detection logic [2025-12-31T17:04:13]
