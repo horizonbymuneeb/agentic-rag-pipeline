@@ -94,3 +94,47 @@ def test_empty_question_raises(hybrid_index: HybridIndex) -> None:
 def test_agent_requires_non_empty_index() -> None:
     with pytest.raises(AgentError, match="non-empty index"):
         RAGAgent(HybridIndex())
+
+
+def test_helper_functions(hybrid_index: HybridIndex) -> None:
+    trace = answer_question("What is recall at k?", hybrid_index)
+    compact = summarise_trace(trace)
+    assert compact["question"] == "What is recall at k?"
+    assert compact["steps"] == trace.step_count
+    assert isinstance(compact["rewritten"], bool)
+    traces = compare_agents(["What is recall at k?", "How does grounding work?"], hybrid_index, PipelineConfig())
+    assert len(traces) == 2
+    assert all("answer" in item for item in traces)
+
+
+def test_agent_step_serialises() -> None:
+    step = AgentStep(index=1, kind="retrieve", detail="query='x'", ok=True)
+    assert step.as_dict() == {"step": 1, "kind": "retrieve", "detail": "query='x'", "ok": True}
+
+
+def test_ungrounded_answer_gets_a_caveat(chunks, pipeline_config: PipelineConfig) -> None:
+    """A generated (non-extractive) sentence must be flagged as unsupported.
+
+    The summarise tool stands in for a generator, so this test swaps in a tool that
+    returns a sentence with no overlap with the corpus and checks the guard fires.
+    """
+    from src.ragpipe.tools import Tool, ToolRegistry, make_lookup_tool, make_retrieve_tool
+
+    index = HybridIndex(pipeline_config.retrieval).build(chunks)
+    registry = ToolRegistry()
+    registry.register(make_retrieve_tool(index))
+    registry.register(make_lookup_tool(index.chunks()))
+    registry.register(
+        Tool(
+            name="summarise",
+            description="hallucinating stand-in used to exercise the grounding guard",
+            fn=lambda query, chunk_ids: {
+                "chunk_ids": list(chunk_ids),
+                "sentences": ["Quantum annealing solves protein folding with a superconducting qubit lattice."],
+            },
+        )
+    )
+    trace = RAGAgent(index, pipeline_config, tools=registry).run("What does the k1 parameter control in BM25?")
+    assert trace.grounding is not None
+    assert trace.grounding.coverage < 1.0
+    assert "not directly supported" in trace.answer
