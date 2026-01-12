@@ -361,3 +361,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2025-12-24T09:23:10]
 
 # Fix duplicate chunk detection logic [2025-12-31T17:04:13]
+
+# Implement cross-encoder reranking for better retrieval [2026-01-12T09:12:04]
