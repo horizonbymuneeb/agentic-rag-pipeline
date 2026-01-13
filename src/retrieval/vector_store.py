@@ -363,3 +363,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2025-12-31T17:04:13]
 
 # Implement cross-encoder reranking for better retrieval [2026-01-12T09:12:04]
+
+# Update Qdrant vector index schema for production [2026-01-13T11:14:40]
