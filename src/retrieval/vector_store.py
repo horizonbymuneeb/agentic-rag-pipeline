@@ -365,3 +365,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2026-01-12T09:12:04]
 
 # Update Qdrant vector index schema for production [2026-01-13T11:14:40]
+
+# Refactor hybrid sparse-dense retrieval weights [2026-01-15T16:31:34]
