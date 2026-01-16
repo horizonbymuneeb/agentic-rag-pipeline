@@ -367,3 +367,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2026-01-13T11:14:40]
 
 # Refactor hybrid sparse-dense retrieval weights [2026-01-15T16:31:34]
+
+# Fix chunk overlap logic for markdown parser [2026-01-16T14:01:15]
