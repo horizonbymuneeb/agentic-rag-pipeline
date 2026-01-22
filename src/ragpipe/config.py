@@ -116,3 +116,94 @@ class RetrievalConfig:
     def with_overrides(self, **overrides: Any) -> "RetrievalConfig":
         """Copy with ``overrides`` applied and re-validated."""
         return replace(self, **overrides)
+
+
+@dataclass(frozen=True)
+class RewriteConfig:
+    """Query-rewriting loop: how many rounds, how many terms per rewrite."""
+
+    enabled: bool = True
+    max_rounds: int = 2
+    max_new_terms: int = 2
+    coverage_threshold: float = 0.5
+    min_gap_frequency: int = 1
+
+    def __post_init__(self) -> None:
+        self.validate()
+
+    def validate(self) -> None:
+        _check_positive("max_rounds", self.max_rounds)
+        _check_positive("max_new_terms", self.max_new_terms)
+        _check("coverage_threshold", self.coverage_threshold, 0.0, 1.0)
+        if self.min_gap_frequency < 1:
+            raise ConfigError("min_gap_frequency must be >= 1")
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_mapping(cls, raw: Mapping[str, Any]) -> "RewriteConfig":
+        return _build(cls, raw)
+
+    def with_overrides(self, **overrides: Any) -> "RewriteConfig":
+        """Copy with ``overrides`` applied and re-validated."""
+        return replace(self, **overrides)
+
+
+@dataclass(frozen=True)
+class AgentConfig:
+    """Step budget, tool limits and answer assembly for the agent loop."""
+
+    max_steps: int = 8
+    top_k: int = 4
+    max_summary_sentences: int = 3
+    per_tool_step_cost: int = 1
+    require_grounding: bool = True
+
+    def __post_init__(self) -> None:
+        self.validate()
+
+    def validate(self) -> None:
+        _check_positive("max_steps", self.max_steps)
+        _check_positive("top_k", self.top_k)
+        _check_positive("max_summary_sentences", self.max_summary_sentences)
+        _check_positive("per_tool_step_cost", self.per_tool_step_cost)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_mapping(cls, raw: Mapping[str, Any]) -> "AgentConfig":
+        return _build(cls, raw)
+
+    def with_overrides(self, **overrides: Any) -> "AgentConfig":
+        """Copy with ``overrides`` applied and re-validated."""
+        return replace(self, **overrides)
+
+
+@dataclass(frozen=True)
+class GroundingConfig:
+    """Thresholds for the token-overlap grounding heuristic."""
+
+    support_threshold: float = 0.6
+    min_claim_tokens: int = 3
+    max_claims: int = 8
+
+    def __post_init__(self) -> None:
+        self.validate()
+
+    def validate(self) -> None:
+        _check("support_threshold", self.support_threshold, 0.0, 1.0)
+        _check_positive("min_claim_tokens", self.min_claim_tokens)
+        _check_positive("max_claims", self.max_claims)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_mapping(cls, raw: Mapping[str, Any]) -> "GroundingConfig":
+        return _build(cls, raw)
+
+    def with_overrides(self, **overrides: Any) -> "GroundingConfig":
+        """Copy with ``overrides`` applied and re-validated."""
+        return replace(self, **overrides)
