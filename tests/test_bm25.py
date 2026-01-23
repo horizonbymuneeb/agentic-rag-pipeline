@@ -46,3 +46,29 @@ def test_exact_bm25_scores_without_length_normalisation(toy_chunks, bm25_config:
     assert index.score("beta", 1) == pytest.approx(0.4700036292457356)
     assert index.score("alpha", 0) == pytest.approx(0.9808292530117263)
     assert index.score("gamma", 0) == pytest.approx(0.0)
+
+
+def test_length_normalisation_lowers_the_score(toy_chunks) -> None:
+    without = BM25Index(RetrievalConfig(bm25_k1=1.5, bm25_b=0.0)).build(toy_chunks)
+    with_norm = BM25Index(RetrievalConfig(bm25_k1=1.5, bm25_b=0.75)).build(toy_chunks)
+    assert with_norm.score("beta", 0) == pytest.approx(0.6149580195738596)
+    assert with_norm.score("beta", 0) < without.score("beta", 0)
+
+
+def test_index_statistics_exact(toy_chunks) -> None:
+    index = BM25Index().build(toy_chunks)
+    stats = index.stats()
+    assert stats.documents == 3
+    assert stats.vocabulary == 5  # alpha beta gamma delta epsilon
+    assert index.average_length() == pytest.approx((3 + 2 + 2) / 3)
+    assert len(index) == 3
+
+
+def test_search_ranks_and_drops_zero_scores(toy_chunks, bm25_config: RetrievalConfig) -> None:
+    index = BM25Index(bm25_config).build(toy_chunks)
+    hits = index.search("beta")
+    assert [hit.chunk_id for hit in hits] == ["doc::c0", "doc::c1"]
+    assert [hit.rank for hit in hits] == [1, 2]
+    assert hits[0].score > hits[1].score
+    assert all(hit.source == "bm25" for hit in hits)
+    assert index.search("beta", k=1)[0].chunk_id == "doc::c0"

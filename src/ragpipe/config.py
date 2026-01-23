@@ -207,3 +207,70 @@ class GroundingConfig:
     def with_overrides(self, **overrides: Any) -> "GroundingConfig":
         """Copy with ``overrides`` applied and re-validated."""
         return replace(self, **overrides)
+
+
+@dataclass(frozen=True)
+class PipelineConfig:
+    """The whole pipeline: chunking, retrieval, rewriting, agent, grounding, eval."""
+
+    chunking: ChunkConfig = field(default_factory=ChunkConfig)
+    retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
+    rewrite: RewriteConfig = field(default_factory=RewriteConfig)
+    agent: AgentConfig = field(default_factory=AgentConfig)
+    grounding: GroundingConfig = field(default_factory=GroundingConfig)
+    corpus_seed: int = 0
+    corpus_path: str | None = None
+    eval_k: int = 5
+    run_name: str = "agentic-rag"
+
+    def __post_init__(self) -> None:
+        if self.corpus_seed < 0:
+            raise ConfigError("corpus_seed must be >= 0")
+        _check_positive("eval_k", self.eval_k)
+        if not self.run_name:
+            raise ConfigError("run_name must be a non-empty string")
+
+    def to_dict(self) -> dict[str, Any]:
+        data = asdict(self)
+        data["rewrite"]["enabled"] = self.rewrite.enabled
+        return data
+
+    @classmethod
+    def from_mapping(cls, raw: Mapping[str, Any]) -> "PipelineConfig":
+        raw = dict(raw)
+        chunking = ChunkConfig.from_mapping(raw.pop("chunking", {}) or {})
+        retrieval = RetrievalConfig.from_mapping(raw.pop("retrieval", {}) or {})
+        rewrite = RewriteConfig.from_mapping(raw.pop("rewrite", {}) or {})
+        agent = AgentConfig.from_mapping(raw.pop("agent", {}) or {})
+        grounding = GroundingConfig.from_mapping(raw.pop("grounding", {}) or {})
+        return _build(
+            cls,
+            raw,
+            chunking=chunking,
+            retrieval=retrieval,
+            rewrite=rewrite,
+            agent=agent,
+            grounding=grounding,
+        )
+
+
+def _build(cls: type, raw: Mapping[str, Any], **prebuilt: Any):
+    """Instantiate ``cls`` from ``raw``, converting unknown keys into ``ConfigError``."""
+    known = {f.name for f in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
+    unknown = sorted(set(raw) - known)
+    if unknown:
+        raise ConfigError(f"unknown {cls.__name__} keys: {', '.join(unknown)}")
+    try:
+        return cls(**raw, **prebuilt)
+    except TypeError as exc:
+        raise ConfigError(f"invalid {cls.__name__}: {exc}") from exc
+
+
+def load_yaml(path: str | Path) -> dict[str, Any]:
+    """Read a YAML file whose top level must be a mapping."""
+    data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ConfigError(f"{path}: top level of the config must be a mapping")
+    return data
