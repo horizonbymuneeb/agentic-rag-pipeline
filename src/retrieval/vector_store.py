@@ -373,3 +373,5 @@ if __name__ == '__main__':
 # Fix dangling reference in LangChain retriever [2026-01-22T18:24:32]
 
 # Add reranking timeout fallback mechanism [2026-01-22T17:37:17]
+
+# Fix chunk overlap logic for markdown parser [2026-01-23T10:36:17]
