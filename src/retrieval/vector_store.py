@@ -377,3 +377,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2026-01-23T10:36:17]
 
 # Implement cross-encoder reranking for better retrieval [2026-01-27T10:41:04]
+
+# Add reranking timeout fallback mechanism [2026-01-28T09:13:52]
