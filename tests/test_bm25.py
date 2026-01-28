@@ -72,3 +72,29 @@ def test_search_ranks_and_drops_zero_scores(toy_chunks, bm25_config: RetrievalCo
     assert hits[0].score > hits[1].score
     assert all(hit.source == "bm25" for hit in hits)
     assert index.search("beta", k=1)[0].chunk_id == "doc::c0"
+
+
+def test_search_unknown_query_returns_nothing(toy_chunks) -> None:
+    index = BM25Index().build(toy_chunks)
+    assert index.search("the and of") == []
+    assert index.search("zeta") == []
+    with pytest.raises(BM25Error):
+        index.search("beta", k=0)
+
+
+def test_query_terms_and_unknown_terms(toy_chunks) -> None:
+    index = BM25Index().build(toy_chunks)
+    assert index.query_terms("beta zeta") == ["beta"]
+    assert index.unknown_terms("beta zeta") == ["zeta"]
+    assert index.document_frequency("beta") == 2
+    assert index.vocabulary == ["alpha", "beta", "delta", "epsilon", "gamma"]
+
+
+def test_build_and_query_errors() -> None:
+    with pytest.raises(BM25Error, match="zero chunks"):
+        BM25Index().build([])
+    index = BM25Index()
+    with pytest.raises(BM25Error, match="call build"):
+        index.search("anything")
+    with pytest.raises(BM25Error):
+        index.chunk_by_id("nope")

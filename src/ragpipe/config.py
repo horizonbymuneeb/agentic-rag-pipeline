@@ -274,3 +274,13 @@ def load_yaml(path: str | Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ConfigError(f"{path}: top level of the config must be a mapping")
     return data
+
+
+def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> PipelineConfig:
+    """Load a :class:`PipelineConfig` from YAML."""
+    return PipelineConfig.from_mapping(load_yaml(path))
+
+
+def default_config() -> PipelineConfig:
+    """All-defaults configuration, used by tests and the CLI's ``--config`` fallback."""
+    return PipelineConfig()
