@@ -299,3 +299,22 @@ def with_retrieval_overrides(config: PipelineConfig, **overrides: Any) -> Pipeli
 def with_chunking_overrides(config: PipelineConfig, **overrides: Any) -> PipelineConfig:
     """Copy of ``config`` with chunking fields overridden and re-validated."""
     return replace(config, chunking=config.chunking.with_overrides(**overrides))
+
+
+def sweep_retrieval(config: PipelineConfig, sweeps: Mapping[str, Sequence[Any]]) -> list[PipelineConfig]:
+    """Expand retrieval parameter sweeps into one configuration per combination."""
+    import itertools
+
+    names = sorted(sweeps)
+    out: list[PipelineConfig] = []
+    for combo in itertools.product(*(sweeps[name] for name in names)):
+        overrides = dict(zip(names, combo))
+        label = "-".join(f"{key}={value}" for key, value in overrides.items())
+        out.append(
+            replace(
+                config,
+                retrieval=config.retrieval.with_overrides(**overrides),
+                run_name=f"{config.run_name}-{label}",
+            )
+        )
+    return out

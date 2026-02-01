@@ -122,3 +122,12 @@ def test_term_overlap_jaccard_exact() -> None:
     assert term_overlap(["a", "b"], ["b", "c"]) == pytest.approx(1 / 3)
     assert term_overlap(["a"], ["a"]) == pytest.approx(1.0)
     assert term_overlap([], ["a"]) == pytest.approx(0.0)
+
+
+def test_score_breakdown_sums_to_total(toy_chunks, bm25_config: RetrievalConfig) -> None:
+    index = BM25Index(bm25_config).build(toy_chunks)
+    breakdown = score_breakdown(index, "beta alpha", "doc::c0")
+    assert set(breakdown) == {"beta", "alpha"}
+    assert sum(breakdown.values()) == pytest.approx(index.score("beta alpha", 0))
+    with pytest.raises(BM25Error):
+        score_breakdown(index, "beta", "missing")
