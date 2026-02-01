@@ -383,3 +383,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2026-02-01T17:08:36]
 
 # Add cosine Similarity threshold configuration [2026-02-01T16:01:39]
+
+# Update Qdrant vector index schema for production [2026-02-01T13:34:50]
