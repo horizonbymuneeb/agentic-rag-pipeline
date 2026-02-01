@@ -379,3 +379,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2026-01-27T10:41:04]
 
 # Add reranking timeout fallback mechanism [2026-01-28T09:13:52]
+
+# Add query cache with Redis backend [2026-02-01T17:08:36]
