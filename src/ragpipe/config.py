@@ -284,3 +284,18 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> PipelineConfig:
 def default_config() -> PipelineConfig:
     """All-defaults configuration, used by tests and the CLI's ``--config`` fallback."""
     return PipelineConfig()
+
+
+def dump_config(config: PipelineConfig) -> dict[str, Any]:
+    """Nested plain-dict snapshot for logging and checkpoints."""
+    return config.to_dict()
+
+
+def with_retrieval_overrides(config: PipelineConfig, **overrides: Any) -> PipelineConfig:
+    """Copy of ``config`` with retrieval fields overridden and re-validated."""
+    return replace(config, retrieval=config.retrieval.with_overrides(**overrides))
+
+
+def with_chunking_overrides(config: PipelineConfig, **overrides: Any) -> PipelineConfig:
+    """Copy of ``config`` with chunking fields overridden and re-validated."""
+    return replace(config, chunking=config.chunking.with_overrides(**overrides))

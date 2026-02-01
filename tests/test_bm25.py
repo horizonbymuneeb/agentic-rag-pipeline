@@ -98,3 +98,27 @@ def test_build_and_query_errors() -> None:
         index.search("anything")
     with pytest.raises(BM25Error):
         index.chunk_by_id("nope")
+
+
+def test_score_bounds_and_validation(toy_chunks) -> None:
+    index = BM25Index().build(toy_chunks)
+    with pytest.raises(BM25Error):
+        index.score("beta", 99)
+    with pytest.raises(BM25Error):
+        index.chunk_by_id("unknown")
+
+
+def test_helpers_and_index_description(toy_chunks) -> None:
+    index = build_index(toy_chunks)
+    described = describe_index(index)
+    assert described["documents"] == 3
+    assert described["top_idf_terms"][0] in {"alpha", "delta", "epsilon", "gamma"}
+    mapping = compare_queries(index, ["beta", "gamma"], k=2)
+    assert mapping["beta"][0] == "doc::c0"
+    assert mapping["gamma"][0] == "doc::c1"
+
+
+def test_term_overlap_jaccard_exact() -> None:
+    assert term_overlap(["a", "b"], ["b", "c"]) == pytest.approx(1 / 3)
+    assert term_overlap(["a"], ["a"]) == pytest.approx(1.0)
+    assert term_overlap([], ["a"]) == pytest.approx(0.0)
