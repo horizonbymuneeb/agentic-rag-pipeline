@@ -387,3 +387,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2026-02-01T13:34:50]
 
 # Add cosine Similarity threshold configuration [2026-02-07T20:57:13]
+
+# Add query rewrite using LLM for clarity [2026-02-10T11:22:49]
