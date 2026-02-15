@@ -136,3 +136,61 @@ SYNTHETIC_PAGES: tuple[tuple[str, str, str], ...] = (
         "metrics are proxies: they reward wording overlap and do not prove correctness.",
     ),
 )
+
+
+def synthetic_documents() -> list[Document]:
+    """The built-in corpus as :class:`Document` objects."""
+    return [
+        Document(doc_id=doc_id, title=title, text=text, source="synthetic")
+        for doc_id, title, text in SYNTHETIC_PAGES
+    ]
+
+
+def build_corpus(seed: int = 0, extra_documents: Sequence[Document] | None = None) -> list[Document]:
+    """Return the offline corpus, optionally extended with caller documents.
+
+    ``seed`` is accepted (and validated) because callers treat the corpus as
+    generated data; the built-in pages are fixed text, so the seed only affects
+    nothing today and is kept for interface stability.
+    """
+    if seed < 0:
+        raise CorpusError("seed must be >= 0")
+    documents = synthetic_documents()
+    if extra_documents:
+        documents.extend(extra_documents)
+    if not documents:
+        raise CorpusError("corpus is empty")
+    ids = [document.doc_id for document in documents]
+    if len(set(ids)) != len(ids):
+        raise CorpusError("document ids must be unique")
+    return documents
+
+
+def load_corpus(directory: str | Path, suffixes: Sequence[str] = (".txt", ".md")) -> list[Document]:
+    """Read every matching file in ``directory`` as one document.
+
+    Files are sorted by name so the doc ids are stable across machines. The
+    document id is the file stem, which is what the evaluation set keys on.
+    """
+    root = Path(directory)
+    if not root.is_dir():
+        raise CorpusError(f"corpus directory does not exist: {root}")
+    documents: list[Document] = []
+    for path in sorted(root.iterdir()):
+        if path.suffix.lower() not in suffixes or not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8").strip()
+        if not text:
+            continue
+        first_line = text.splitlines()[0].lstrip("# ").strip()
+        documents.append(
+            Document(
+                doc_id=path.stem,
+                title=first_line or path.stem,
+                text=text,
+                source=str(path),
+            )
+        )
+    if not documents:
+        raise CorpusError(f"no {'/'.join(suffixes)} documents found in {root}")
+    return documents
