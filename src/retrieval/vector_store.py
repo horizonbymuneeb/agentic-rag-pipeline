@@ -389,3 +389,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2026-02-07T20:57:13]
 
 # Add query rewrite using LLM for clarity [2026-02-10T11:22:49]
+
+# Refactor hybrid sparse-dense retrieval weights [2026-02-15T10:57:00]
