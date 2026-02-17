@@ -393,3 +393,5 @@ if __name__ == '__main__':
 # Refactor hybrid sparse-dense retrieval weights [2026-02-15T10:57:00]
 
 # Update README with architecture diagram [2026-02-16T19:25:05]
+
+# Add cosine Similarity threshold configuration [2026-02-17T16:44:52]
