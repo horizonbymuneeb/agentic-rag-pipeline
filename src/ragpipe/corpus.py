@@ -194,3 +194,43 @@ def load_corpus(directory: str | Path, suffixes: Sequence[str] = (".txt", ".md")
     if not documents:
         raise CorpusError(f"no {'/'.join(suffixes)} documents found in {root}")
     return documents
+
+
+def write_corpus(documents: Iterable[Document], directory: str | Path) -> list[Path]:
+    """Write documents to ``directory`` as markdown files and return the paths."""
+    root = Path(directory)
+    root.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for document in documents:
+        path = root / f"{document.doc_id}.md"
+        path.write_text(f"# {document.title}\n\n{document.text}\n", encoding="utf-8")
+        written.append(path)
+    return written
+
+
+def corpus_statistics(documents: Sequence[Document]) -> dict[str, Any]:
+    """Word count and vocabulary summary, printed by the CLI."""
+    if not documents:
+        raise CorpusError("corpus is empty")
+    counts = [document.word_count for document in documents]
+    vocabulary: set[str] = set()
+    for document in documents:
+        vocabulary.update(word.lower() for word in document.text.split())
+    return {
+        "documents": len(documents),
+        "total_words": sum(counts),
+        "mean_words": round(sum(counts) / len(counts), 2),
+        "min_words": min(counts),
+        "max_words": max(counts),
+        "vocabulary": len(vocabulary),
+    }
+
+
+def documents_by_id(documents: Sequence[Document]) -> dict[str, Document]:
+    """Index documents by id, rejecting duplicates."""
+    mapping: dict[str, Document] = {}
+    for document in documents:
+        if document.doc_id in mapping:
+            raise CorpusError(f"duplicate document id {document.doc_id!r}")
+        mapping[document.doc_id] = document
+    return mapping
