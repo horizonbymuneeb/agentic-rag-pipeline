@@ -234,3 +234,11 @@ def documents_by_id(documents: Sequence[Document]) -> dict[str, Document]:
             raise CorpusError(f"duplicate document id {document.doc_id!r}")
         mapping[document.doc_id] = document
     return mapping
+
+
+def filter_documents(documents: Sequence[Document], required_terms: Iterable[str]) -> list[Document]:
+    """Documents containing every one of ``required_terms`` (case-insensitive)."""
+    terms = [term.lower() for term in required_terms]
+    if not terms:
+        raise CorpusError("required_terms is empty")
+    return [document for document in documents if all(term in document.text.lower() for term in terms)]
