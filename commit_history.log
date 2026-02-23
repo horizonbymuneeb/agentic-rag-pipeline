@@ -129,3 +129,4 @@
 [2026-02-15T10:57:00] Refactor hybrid sparse-dense retrieval weights
 [2026-02-16T19:25:05] Update README with architecture diagram
 [2026-02-17T16:44:52] Add cosine Similarity threshold configuration
+[2026-02-23T20:06:14] Fix duplicate chunk detection logic
