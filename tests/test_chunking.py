@@ -46,3 +46,30 @@ def test_fixed_overlap_repeats_text() -> None:
     chunks = fixed_size_chunks(text, size=6, overlap=2, min_chars=1)
     assert [chunk.text for chunk in chunks] == ["012345", "456789"]
     assert chunks[1].start == 4
+
+
+def test_fixed_chunks_drop_short_tail() -> None:
+    chunks = fixed_size_chunks("abcdefghijklm", size=10, overlap=0, min_chars=4)
+    assert [chunk.text for chunk in chunks] == ["abcdefghij"]
+    chunks = fixed_size_chunks("abcdefghijklm", size=10, overlap=0, min_chars=1)
+    assert [chunk.text for chunk in chunks] == ["abcdefghij", "klm"]
+
+
+def test_fixed_chunk_validation() -> None:
+    with pytest.raises(ChunkError):
+        fixed_size_chunks("abc", size=0, overlap=0)
+    with pytest.raises(ChunkError):
+        fixed_size_chunks("abc", size=5, overlap=5)
+    with pytest.raises(ChunkError):
+        fixed_size_chunks("   ", size=5, overlap=0)
+    with pytest.raises(ChunkError):
+        fixed_size_chunks("ab", size=40, overlap=0, min_chars=10)
+
+
+def test_sentence_chunks_keep_sentences_whole() -> None:
+    text = "One sentence is here. Another sentence follows. A third sentence ends it."
+    chunks = sentence_aware_chunks(text, max_chars=40, overlap_sentences=0, min_chars=10)
+    assert len(chunks) == 3
+    for chunk in chunks:
+        assert chunk.text.endswith(".")
+        assert chunk.text.count(".") == 1
