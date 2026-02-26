@@ -397,3 +397,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2026-02-17T16:44:52]
 
 # Fix duplicate chunk detection logic [2026-02-23T20:06:14]
+
+# Refactor hybrid sparse-dense retrieval weights [2026-02-26T17:37:04]
