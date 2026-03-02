@@ -399,3 +399,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2026-02-23T20:06:14]
 
 # Refactor hybrid sparse-dense retrieval weights [2026-02-26T17:37:04]
+
+# Implement parent-child document chunk linking [2026-03-02T15:14:02]
