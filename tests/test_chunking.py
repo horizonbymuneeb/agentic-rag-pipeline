@@ -73,3 +73,26 @@ def test_sentence_chunks_keep_sentences_whole() -> None:
     for chunk in chunks:
         assert chunk.text.endswith(".")
         assert chunk.text.count(".") == 1
+
+
+def test_sentence_chunks_overlap_repeats_sentences() -> None:
+    text = "Alpha sentence one. Beta sentence two. Gamma sentence three."
+    chunks = sentence_aware_chunks(text, max_chars=25, overlap_sentences=1, min_chars=5)
+    assert len(chunks) >= 2
+    assert chunks[1].text.split(".")[0].strip() in chunks[0].text
+
+
+def test_long_sentence_becomes_its_own_chunk() -> None:
+    long_sentence = "word " * 40 + "end."
+    chunks = sentence_aware_chunks(long_sentence + " Short one.", max_chars=50, overlap_sentences=0, min_chars=5)
+    assert len(chunks) == 2
+    assert chunks[0].length > 50
+
+
+def test_sentence_chunk_validation() -> None:
+    with pytest.raises(ChunkError):
+        sentence_aware_chunks("abc.", max_chars=0)
+    with pytest.raises(ChunkError):
+        sentence_aware_chunks("abc.", max_chars=10, overlap_sentences=-1)
+    with pytest.raises(ChunkError):
+        sentence_aware_chunks("   ", max_chars=10)

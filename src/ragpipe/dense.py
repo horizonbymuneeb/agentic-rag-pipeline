@@ -45,3 +45,20 @@ class EmbeddingStats:
             "vocabulary": self.vocabulary,
             "mean_norm": round(self.mean_norm, 6),
         }
+
+
+def _hash_token(token: str) -> int:
+    """Stable 64-bit hash of a token (independent of Python's hash randomisation)."""
+    return int.from_bytes(hashlib.blake2b(token.encode("utf-8"), digest_size=8).digest(), "big")
+
+
+def token_bucket(token: str, dim: int) -> int:
+    """Bucket index for a token in a ``dim``-wide vector."""
+    if dim <= 0:
+        raise DenseError(f"dim must be positive, got {dim}")
+    return _hash_token(token) % int(dim)
+
+
+def token_sign(token: str) -> float:
+    """Deterministic +/-1 sign for a token, taken from the top hash bit."""
+    return 1.0 if (_hash_token(token) >> 63) & 1 == 0 else -1.0
