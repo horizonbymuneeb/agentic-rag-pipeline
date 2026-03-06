@@ -96,3 +96,32 @@ def test_sentence_chunk_validation() -> None:
         sentence_aware_chunks("abc.", max_chars=10, overlap_sentences=-1)
     with pytest.raises(ChunkError):
         sentence_aware_chunks("   ", max_chars=10)
+
+
+def test_chunk_properties_and_validation() -> None:
+    chunk = Chunk(chunk_id="c", doc_id="d", index=0, text="two words", start=0, end=9)
+    assert chunk.length == 9
+    assert chunk.word_count == 2
+    assert chunk.preview(4) == "two ..."
+    with pytest.raises(ChunkError):
+        Chunk(chunk_id="c", doc_id="d", index=0, text=" ", start=0, end=1)
+    with pytest.raises(ChunkError):
+        Chunk(chunk_id="c", doc_id="d", index=0, text="ok", start=5, end=2)
+
+
+def test_chunk_document_prefixes_ids() -> None:
+    document = Document(doc_id="page", title="Page", text="First sentence here. Second sentence here.")
+    chunks = chunk_document(document, ChunkConfig(mode="fixed", size=25, overlap=5, min_chars=5))
+    assert all(chunk.chunk_id.startswith("page::fixed-") for chunk in chunks)
+    assert all(chunk.doc_id == "page" for chunk in chunks)
+
+
+def test_chunker_class_wrappers() -> None:
+    chunker = Chunker(ChunkConfig(mode="sentence", max_chars=100, overlap_sentences=0, min_chars=20))
+    document = Document(doc_id="d", title="D", text="One sentence here now. Two sentence here now.")
+    chunks = chunker.split_documents([document])
+    assert len(chunks) >= 1
+    inline = chunker.split_text("Standalone text sentence here.", doc_id="inline")
+    assert inline[0].doc_id == "inline"
+    described = chunker.describe()
+    assert described["mode"] == "sentence"
