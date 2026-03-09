@@ -166,3 +166,81 @@ class HashingTfIdfEmbedder:
             vocabulary=len(self._document_frequency),
             mean_norm=1.0,
         )
+
+
+class DenseIndex:
+    """Cosine search over a fixed embedding of the chunk corpus."""
+
+    def __init__(self, config: RetrievalConfig | None = None) -> None:
+        self.config = config or RetrievalConfig()
+        self.embedder = HashingTfIdfEmbedder(self.config.embedding_dim, self.config.min_term_length)
+        self._chunks: list[Chunk] = []
+        self._matrix: np.ndarray | None = None
+
+    def build(self, chunks: Sequence[Chunk]) -> "DenseIndex":
+        """Fit the embedder and encode every chunk."""
+        if not chunks:
+            raise DenseError("cannot build a dense index from zero chunks")
+        self._chunks = list(chunks)
+        self.embedder.fit_chunks(chunks)
+        self._matrix = self.embedder.embed_batch([chunk.text for chunk in chunks])
+        return self
+
+    @classmethod
+    def from_chunks(cls, chunks: Sequence[Chunk], config: RetrievalConfig | None = None) -> "DenseIndex":
+        return cls(config).build(chunks)
+
+    def __len__(self) -> int:
+        return len(self._chunks)
+
+    @property
+    def matrix(self) -> np.ndarray:
+        """``(n_chunks, dim)`` embedding matrix."""
+        if self._matrix is None:
+            raise DenseError("index is empty; call build() first")
+        return self._matrix
+
+    def similarities(self, query: str) -> np.ndarray:
+        """Cosine similarity of ``query`` against every chunk, in insertion order."""
+        vector = self.embedder.embed(query)
+        return self.matrix @ vector
+
+    def search(self, query: str, k: int | None = None) -> list[RetrievalHit]:
+        """Top ``k`` chunks by cosine similarity, dropping non-positive scores."""
+        top_k = self.config.top_k if k is None else int(k)
+        if top_k <= 0:
+            raise DenseError(f"k must be positive, got {k}")
+        scores = self.similarities(query)
+        ranked = sorted(
+            ((float(score), index) for index, score in enumerate(scores) if score > 0.0),
+            key=lambda pair: (-pair[0], pair[1]),
+        )[:top_k]
+        return [
+            RetrievalHit(chunk_id=self._chunks[index].chunk_id, score=score, rank=rank, source="dense")
+            for rank, (score, index) in enumerate(ranked, start=1)
+        ]
+
+    def chunk_by_id(self, chunk_id: str) -> Chunk:
+        """Look up a chunk by id."""
+        for chunk in self._chunks:
+            if chunk.chunk_id == chunk_id:
+                return chunk
+        raise BM25Error(f"unknown chunk id {chunk_id!r}")
+
+
+def embed_texts(texts: Sequence[str], dim: int = 256) -> np.ndarray:
+    """Fit-and-embed helper for ad-hoc use in notebooks and tests."""
+    return HashingTfIdfEmbedder(dim).fit(texts).embed_batch(texts)
+
+
+def nearest_neighbours(
+    embedder: HashingTfIdfEmbedder, texts: Sequence[str], query: str, k: int = 3
+) -> list[tuple[int, float]]:
+    """Indices and cosine scores of the ``k`` closest texts to ``query``."""
+    if not texts:
+        raise DenseError("need at least one text")
+    matrix = embedder.embed_batch(texts)
+    vector = embedder.embed(query)
+    scores = matrix @ vector
+    order = np.argsort(-scores)[:k]
+    return [(int(index), float(scores[index])) for index in order]

@@ -125,3 +125,21 @@ def test_chunker_class_wrappers() -> None:
     assert inline[0].doc_id == "inline"
     described = chunker.describe()
     assert described["mode"] == "sentence"
+
+
+def test_chunk_documents_rejects_duplicate_ids() -> None:
+    first = Document(doc_id="same", title="A", text="Sentence one here. Sentence two here.")
+    second = Document(doc_id="same", title="B", text="Other sentence one. Other sentence two.")
+    with pytest.raises(ChunkError, match="duplicate chunk id"):
+        chunk_documents([first, second], ChunkConfig(mode="sentence", max_chars=200, overlap_sentences=0, min_chars=10))
+
+
+def test_chunk_statistics_and_overlap_ratio(chunks: list[Chunk]) -> None:
+    stats = chunk_statistics(chunks)
+    assert stats["chunks"] == len(chunks)
+    assert stats["documents"] == 8
+    assert stats["max_chars"] >= stats["min_chars"]
+    ratio = overlap_ratio(chunks)
+    assert 0.0 < ratio <= 1.0
+    with pytest.raises(ChunkError):
+        chunk_statistics([])
