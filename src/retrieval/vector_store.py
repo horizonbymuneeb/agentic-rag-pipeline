@@ -411,3 +411,5 @@ if __name__ == '__main__':
 # Implement evaluation framework for RAG metrics [2026-03-09T13:23:00]
 
 # Update README with architecture diagram [2026-03-09T10:36:19]
+
+# Add reranking timeout fallback mechanism [2026-03-09T13:32:52]
