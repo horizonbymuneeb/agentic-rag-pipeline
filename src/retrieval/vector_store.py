@@ -409,3 +409,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2026-03-06T15:11:44]
 
 # Implement evaluation framework for RAG metrics [2026-03-09T13:23:00]
+
+# Update README with architecture diagram [2026-03-09T10:36:19]
