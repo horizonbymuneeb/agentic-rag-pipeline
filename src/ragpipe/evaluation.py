@@ -17,3 +17,27 @@ from .agent import RAGAgent, AgentTrace
 from .chunking import Chunk
 from .corpus import Document
 from .fusion import HybridIndex
+
+METHOD = "recall@k over source-page chunks + key-term answer coverage (proxies, not correctness)"
+
+
+class EvaluationError(ValueError):
+    """Raised for empty question sets or invalid k."""
+
+
+@dataclass(frozen=True)
+class EvalQuestion:
+    """One evaluation item: the question, its page, and the terms a good answer uses."""
+
+    question: str
+    doc_id: str
+    expected_terms: tuple[str, ...]
+    gold_chunk_ids: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "question": self.question,
+            "doc_id": self.doc_id,
+            "expected_terms": list(self.expected_terms),
+            "gold_chunk_ids": list(self.gold_chunk_ids),
+        }
