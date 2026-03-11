@@ -415,3 +415,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2026-03-09T13:32:52]
 
 # Add cosine Similarity threshold configuration [2026-03-10T19:47:01]
+
+# Implement parent-child document chunk linking [2026-03-11T17:10:19]
