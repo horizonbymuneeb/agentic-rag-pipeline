@@ -177,3 +177,31 @@ def gold_chunks_for(doc_id: str, chunks: Sequence[Chunk]) -> tuple[str, ...]:
     if not gold:
         raise EvaluationError(f"no chunks found for doc_id {doc_id!r}")
     return gold
+
+
+def build_eval_set(chunks: Sequence[Chunk], specs: Sequence[tuple[str, str, tuple[str, ...]]] = QUESTION_SPECS) -> list[EvalQuestion]:
+    """Materialise :data:`QUESTION_SPECS` against the chunked corpus."""
+    if not chunks:
+        raise EvaluationError("cannot build an evaluation set from zero chunks")
+    questions: list[EvalQuestion] = []
+    for question, doc_id, expected_terms in specs:
+        questions.append(
+            EvalQuestion(
+                question=question,
+                doc_id=doc_id,
+                expected_terms=tuple(expected_terms),
+                gold_chunk_ids=gold_chunks_for(doc_id, chunks),
+            )
+        )
+    return questions
+
+
+def recall_at_k(retrieved_ids: Sequence[str], gold_ids: Sequence[str], k: int) -> float:
+    """Fraction of gold chunks present in the first ``k`` retrieved ids."""
+    if k <= 0:
+        raise EvaluationError(f"k must be positive, got {k}")
+    if not gold_ids:
+        raise EvaluationError("gold_ids is empty")
+    top = set(list(retrieved_ids)[:k])
+    hits = sum(1 for chunk_id in set(gold_ids) if chunk_id in top)
+    return hits / len(set(gold_ids))

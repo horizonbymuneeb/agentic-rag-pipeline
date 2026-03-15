@@ -39,3 +39,41 @@ def test_pipeline_ask_payload() -> None:
     assert payload["step_count"] >= 2
     assert payload["grounding_summary"]["method"].startswith("lexical")
     assert payload["tools"]["calls"] >= 1
+
+
+def test_cli_stats_writes_json(tmp_path: Path) -> None:
+    out = tmp_path / "stats.json"
+    code = main(["--config", str(tmp_path / "missing.yaml"), "--stats", "--out", str(out)])
+    assert code == 0
+    assert out.exists()
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["stats"]["corpus"]["documents"] == 8
+
+
+def test_cli_query_writes_answers(tmp_path: Path) -> None:
+    out = tmp_path / "answers.json"
+    code = main(
+        [
+            "--query",
+            "What does the k1 parameter control in BM25?",
+            "--query",
+            "What is recall at k measuring?",
+            "--out",
+            str(out),
+        ]
+    )
+    assert code == 0
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert len(payload["answers"]) == 2
+    assert all(answer["answer"] for answer in payload["answers"])
+
+
+def test_cli_eval_writes_report(tmp_path: Path) -> None:
+    out = tmp_path / "eval.json"
+    code = main(["--eval", "--out", str(out)])
+    assert code == 0
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    evaluation = payload["evaluation"]
+    assert evaluation["questions"] == 16
+    assert 0.0 <= evaluation["recall_at_k"] <= 1.0
+    assert 0.0 <= evaluation["answer_coverage"] <= 1.0
