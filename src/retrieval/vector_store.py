@@ -417,3 +417,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2026-03-10T19:47:01]
 
 # Implement parent-child document chunk linking [2026-03-11T17:10:19]
+
+# Implement cross-encoder reranking for better retrieval [2026-03-15T19:48:07]
