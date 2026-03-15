@@ -41,3 +41,139 @@ class EvalQuestion:
             "expected_terms": list(self.expected_terms),
             "gold_chunk_ids": list(self.gold_chunk_ids),
         }
+
+
+@dataclass(frozen=True)
+class EvalResult:
+    """Per-question metrics with the aggregate numbers derived from them."""
+
+    k: int
+    questions: tuple[EvalQuestion, ...]
+    recalls: tuple[float, ...]
+    coverages: tuple[float, ...]
+
+    @property
+    def mean_recall(self) -> float:
+        return sum(self.recalls) / len(self.recalls) if self.recalls else 0.0
+
+    @property
+    def mean_coverage(self) -> float:
+        return sum(self.coverages) / len(self.coverages) if self.coverages else 0.0
+
+    @property
+    def perfect_recall_count(self) -> int:
+        return sum(1 for value in self.recalls if value >= 1.0)
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "k": self.k,
+            "method": METHOD,
+            "questions": len(self.questions),
+            "recall_at_k": round(self.mean_recall, 4),
+            "answer_coverage": round(self.mean_coverage, 4),
+            "perfect_recall_count": self.perfect_recall_count,
+            "per_question": [
+                {
+                    "question": question.question,
+                    "doc_id": question.doc_id,
+                    "recall": round(recall, 4),
+                    "coverage": round(coverage, 4),
+                }
+                for question, recall, coverage in zip(self.questions, self.recalls, self.coverages)
+            ],
+        }
+
+
+# Questions written against the synthetic pages in ``corpus.SYNTHETIC_PAGES``.
+# Each one uses vocabulary that appears on exactly one page, so the gold set is well
+# defined; the expected terms are what a correct extractive answer must contain.
+QUESTION_SPECS: tuple[tuple[str, str, tuple[str, ...]], ...] = (
+    (
+        "What does the k1 parameter control in BM25?",
+        "bm25-scoring",
+        ("term", "frequency", "saturates"),
+    ),
+    (
+        "How does the b parameter normalise for document length?",
+        "bm25-scoring",
+        ("length", "normalisation"),
+    ),
+    (
+        "How does reciprocal rank fusion combine ranked lists?",
+        "rank-fusion",
+        ("sum", "rank", "sixty"),
+    ),
+    (
+        "Why can lexical scores and cosine similarities not be added directly?",
+        "rank-fusion",
+        ("different", "scales"),
+    ),
+    (
+        "How are hashing embeddings built without a vocabulary?",
+        "hashing-embeddings",
+        ("buckets", "deterministic", "hash"),
+    ),
+    (
+        "Why does sign hashing help with collisions?",
+        "hashing-embeddings",
+        ("sign", "collisions"),
+    ),
+    (
+        "What is the difference between fixed-size and sentence-aware chunking?",
+        "chunking",
+        ("sentence", "character"),
+    ),
+    (
+        "Why does chunk overlap protect against answers spanning a boundary?",
+        "chunking",
+        ("overlap", "sentence", "boundary"),
+    ),
+    (
+        "What signal is used to rewrite a query?",
+        "query-rewriting",
+        ("gap", "term", "frequency"),
+    ),
+    (
+        "Why does the rewriting loop need a budget?",
+        "query-rewriting",
+        ("budget", "retrieval"),
+    ),
+    (
+        "How is answer grounding checked with token overlap?",
+        "grounding",
+        ("claims", "tokens", "threshold"),
+    ),
+    (
+        "What can the lexical grounding heuristic not detect?",
+        "grounding",
+        ("entailment", "paraphrase"),
+    ),
+    (
+        "What happens when the agent step budget runs out?",
+        "agent-loop",
+        ("budget", "answer"),
+    ),
+    (
+        "Why should tools validate their arguments?",
+        "agent-loop",
+        ("structured", "results"),
+    ),
+    (
+        "What is recall at k measuring?",
+        "evaluation",
+        ("gold", "chunks", "fraction"),
+    ),
+    (
+        "Which two metrics does the offline evaluation report?",
+        "evaluation",
+        ("recall", "coverage"),
+    ),
+)
+
+
+def gold_chunks_for(doc_id: str, chunks: Sequence[Chunk]) -> tuple[str, ...]:
+    """Chunk ids produced from ``doc_id`` (the gold evidence for a page-level question)."""
+    gold = tuple(chunk.chunk_id for chunk in chunks if chunk.doc_id == doc_id)
+    if not gold:
+        raise EvaluationError(f"no chunks found for doc_id {doc_id!r}")
+    return gold
