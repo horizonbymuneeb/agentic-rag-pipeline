@@ -419,3 +419,5 @@ if __name__ == '__main__':
 # Implement parent-child document chunk linking [2026-03-11T17:10:19]
 
 # Implement cross-encoder reranking for better retrieval [2026-03-15T19:48:07]
+
+# Add source document provenance tracking [2026-03-15T13:46:46]
