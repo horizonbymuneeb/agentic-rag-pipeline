@@ -142,3 +142,4 @@
 [2026-03-11T17:10:19] Implement parent-child document chunk linking
 [2026-03-15T19:48:07] Implement cross-encoder reranking for better retrieval
 [2026-03-15T13:46:46] Add source document provenance tracking
+[2026-03-17T15:33:28] Add semantic routing by query intent classification
