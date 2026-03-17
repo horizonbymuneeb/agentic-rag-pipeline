@@ -77,3 +77,10 @@ def test_cli_eval_writes_report(tmp_path: Path) -> None:
     assert evaluation["questions"] == 16
     assert 0.0 <= evaluation["recall_at_k"] <= 1.0
     assert 0.0 <= evaluation["answer_coverage"] <= 1.0
+
+
+def test_pipeline_evaluate_returns_result() -> None:
+    pipeline = build_pipeline(PipelineConfig())
+    result = pipeline.evaluate()
+    assert result.k == PipelineConfig().eval_k
+    assert len(result.questions) == 16

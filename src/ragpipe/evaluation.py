@@ -205,3 +205,38 @@ def recall_at_k(retrieved_ids: Sequence[str], gold_ids: Sequence[str], k: int) -
     top = set(list(retrieved_ids)[:k])
     hits = sum(1 for chunk_id in set(gold_ids) if chunk_id in top)
     return hits / len(set(gold_ids))
+
+
+def answer_coverage(answer: str, expected_terms: Sequence[str]) -> float:
+    """Fraction of expected terms present in the answer (case-insensitive substring)."""
+    if not expected_terms:
+        raise EvaluationError("expected_terms is empty")
+    lowered = answer.lower()
+    present = sum(1 for term in expected_terms if term.lower() in lowered)
+    return present / len(expected_terms)
+
+
+def evaluate_retrieval(index: HybridIndex, questions: Sequence[EvalQuestion], k: int = 5) -> dict[str, float]:
+    """Mean recall@k of the hybrid retriever over the question set."""
+    if not questions:
+        raise EvaluationError("no questions to evaluate")
+    recalls = []
+    for question in questions:
+        retrieved = [hit.chunk_id for hit in index.search(question.question, k)]
+        recalls.append(recall_at_k(retrieved, question.gold_chunk_ids, k))
+    return {"k": float(k), "mean_recall": sum(recalls) / len(recalls), "questions": float(len(questions))}
+
+
+def evaluate_answers(
+    agent: RAGAgent, questions: Sequence[EvalQuestion], k: int = 5
+) -> tuple[list[AgentTrace], list[float]]:
+    """Run every question through the agent and score answer coverage."""
+    if not questions:
+        raise EvaluationError("no questions to evaluate")
+    traces: list[AgentTrace] = []
+    coverages: list[float] = []
+    for question in questions:
+        trace = agent.run(question.question)
+        traces.append(trace)
+        coverages.append(answer_coverage(trace.answer, question.expected_terms))
+    return traces, coverages
