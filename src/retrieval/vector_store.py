@@ -423,3 +423,5 @@ if __name__ == '__main__':
 # Add source document provenance tracking [2026-03-15T13:46:46]
 
 # Add semantic routing by query intent classification [2026-03-17T15:33:28]
+
+# Update tests for async retrieval paths [2026-03-18T12:39:00]
