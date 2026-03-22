@@ -240,3 +240,36 @@ def evaluate_answers(
         traces.append(trace)
         coverages.append(answer_coverage(trace.answer, question.expected_terms))
     return traces, coverages
+
+
+def evaluate_pipeline(
+    index: HybridIndex,
+    agent: RAGAgent,
+    questions: Sequence[EvalQuestion],
+    k: int = 5,
+) -> EvalResult:
+    """Full offline evaluation: recall@k plus answer coverage, per question and averaged."""
+    if not questions:
+        raise EvaluationError("no questions to evaluate")
+    recalls: list[float] = []
+    coverages: list[float] = []
+    for question in questions:
+        retrieved = [hit.chunk_id for hit in index.search(question.question, k)]
+        recalls.append(recall_at_k(retrieved, question.gold_chunk_ids, k))
+        trace = agent.run(question.question)
+        coverages.append(answer_coverage(trace.answer, question.expected_terms))
+    return EvalResult(
+        k=k,
+        questions=tuple(questions),
+        recalls=tuple(recalls),
+        coverages=tuple(coverages),
+    )
+
+
+def evaluate_corpus(
+    documents: Sequence[Document], chunks: Sequence[Chunk], index: HybridIndex, agent: RAGAgent, k: int = 5
+) -> EvalResult:
+    """Convenience wrapper that rebuilds the question set from ``chunks``."""
+    if not documents:
+        raise EvaluationError("cannot evaluate an empty corpus")
+    return evaluate_pipeline(index, agent, build_eval_set(chunks), k=k)
