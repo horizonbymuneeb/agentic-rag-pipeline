@@ -427,3 +427,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2026-03-18T12:39:00]
 
 # Optimize embedding batch processing throughput [2026-03-22T20:44:00]
+
+# Update README with architecture diagram [2026-03-26T17:27:24]
