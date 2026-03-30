@@ -429,3 +429,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2026-03-22T20:44:00]
 
 # Update README with architecture diagram [2026-03-26T17:27:24]
+
+# Fix connection pool timeout handling [2026-03-30T16:57:33]
