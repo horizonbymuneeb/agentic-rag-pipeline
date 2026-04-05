@@ -22,3 +22,5 @@ from src.ragpipe.config import (
     with_chunking_overrides,
     with_retrieval_overrides,
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[1]

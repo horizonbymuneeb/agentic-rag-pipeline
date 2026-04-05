@@ -126,3 +126,107 @@ def fuse_hits(
         weights=[bm25_weight, dense_weight],
         top_n=top_n,
     )
+
+
+class HybridIndex:
+    """Both retrievers over the same chunk corpus, fused with RRF."""
+
+    def __init__(self, config: RetrievalConfig | None = None) -> None:
+        self.config = config or RetrievalConfig()
+        self.bm25: BM25Index | None = None
+        self.dense: DenseIndex | None = None
+        self._chunks: list[Chunk] = []
+
+    def build(self, chunks: Sequence[Chunk]) -> "HybridIndex":
+        """Build the lexical and dense indexes over ``chunks``."""
+        if not chunks:
+            raise FusionError("cannot build a hybrid index from zero chunks")
+        self._chunks = list(chunks)
+        self.bm25 = BM25Index(self.config).build(chunks)
+        self.dense = DenseIndex(self.config).build(chunks)
+        return self
+
+    @classmethod
+    def from_chunks(cls, chunks: Sequence[Chunk], config: RetrievalConfig | None = None) -> "HybridIndex":
+        return cls(config).build(chunks)
+
+    def __len__(self) -> int:
+        return len(self._chunks)
+
+    def _require_built(self) -> tuple[BM25Index, DenseIndex]:
+        if self.bm25 is None or self.dense is None:
+            raise FusionError("hybrid index is empty; call build() first")
+        return self.bm25, self.dense
+
+    def lexical_hits(self, query: str, k: int | None = None) -> list[RetrievalHit]:
+        """BM25-only ranking."""
+        bm25, _ = self._require_built()
+        return bm25.search(query, k or self.config.candidate_k)
+
+    def dense_hits(self, query: str, k: int | None = None) -> list[RetrievalHit]:
+        """Dense-only ranking."""
+        _, dense = self._require_built()
+        return dense.search(query, k or self.config.candidate_k)
+
+    def search(self, query: str, k: int | None = None) -> list[FusionHit]:
+        """Fused top-``k`` results for ``query``."""
+        top_k = self.config.top_k if k is None else int(k)
+        if top_k <= 0:
+            raise FusionError(f"k must be positive, got {k}")
+        lexical = self.lexical_hits(query, self.config.candidate_k)
+        dense = self.dense_hits(query, self.config.candidate_k)
+        return fuse_hits(
+            lexical,
+            dense,
+            k=self.config.rrf_k,
+            bm25_weight=self.config.bm25_weight,
+            dense_weight=self.config.dense_weight,
+            top_n=top_k,
+        )
+
+    def chunk_by_id(self, chunk_id: str) -> Chunk:
+        """Look up a chunk by id."""
+        for chunk in self._chunks:
+            if chunk.chunk_id == chunk_id:
+                return chunk
+        raise BM25Error(f"unknown chunk id {chunk_id!r}")
+
+    def chunks(self) -> list[Chunk]:
+        """All indexed chunks."""
+        self._require_built()
+        return list(self._chunks)
+
+    def source_agreement(self, query: str, k: int = 5) -> dict[str, Any]:
+        """How much the two retrievers agree in their top ``k`` (a tuning diagnostic)."""
+        lexical = {hit.chunk_id for hit in self.lexical_hits(query, k)}
+        dense = {hit.chunk_id for hit in self.dense_hits(query, k)}
+        union = lexical | dense
+        return {
+            "query": query,
+            "lexical_only": sorted(lexical - dense),
+            "dense_only": sorted(dense - lexical),
+            "shared": sorted(lexical & dense),
+            "jaccard": len(lexical & dense) / len(union) if union else 0.0,
+        }
+
+    def stats(self) -> dict[str, Any]:
+        """Both child indexes' statistics plus the fusion constants."""
+        bm25, dense = self._require_built()
+        return {
+            "chunks": len(self._chunks),
+            "bm25": bm25.stats().as_dict(),
+            "dense": dense.embedder.stats().as_dict(),
+            "rrf_k": self.config.rrf_k,
+            "bm25_weight": self.config.bm25_weight,
+            "dense_weight": self.config.dense_weight,
+        }
+
+
+def compare_fusions(
+    bm25_hits: Sequence[RetrievalHit], dense_hits: Sequence[RetrievalHit], k_values: Sequence[int]
+) -> dict[int, list[str]]:
+    """Fused rankings for several ``k`` constants (used by the fusion tests)."""
+    return {
+        int(k): [hit.chunk_id for hit in fuse_hits(bm25_hits, dense_hits, k=int(k))]
+        for k in k_values
+    }
