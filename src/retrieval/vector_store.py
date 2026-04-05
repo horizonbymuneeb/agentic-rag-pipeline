@@ -433,3 +433,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2026-03-30T16:57:33]
 
 # Update README with architecture diagram [2026-04-01T20:50:14]
+
+# Fix duplicate chunk detection logic [2026-04-05T17:19:48]
