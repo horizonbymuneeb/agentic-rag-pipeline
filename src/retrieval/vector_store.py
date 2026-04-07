@@ -435,3 +435,5 @@ if __name__ == '__main__':
 # Update README with architecture diagram [2026-04-01T20:50:14]
 
 # Fix duplicate chunk detection logic [2026-04-05T17:19:48]
+
+# Update tests for async retrieval paths [2026-04-07T20:55:18]
