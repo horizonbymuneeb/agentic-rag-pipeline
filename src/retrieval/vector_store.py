@@ -439,3 +439,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2026-04-07T20:55:18]
 
 # Add query cache with Redis backend [2026-04-08T17:14:23]
+
+# Add reranking timeout fallback mechanism [2026-04-08T19:02:27]
