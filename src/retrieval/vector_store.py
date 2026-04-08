@@ -437,3 +437,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2026-04-05T17:19:48]
 
 # Update tests for async retrieval paths [2026-04-07T20:55:18]
+
+# Add query cache with Redis backend [2026-04-08T17:14:23]
