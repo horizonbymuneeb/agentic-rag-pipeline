@@ -49,3 +49,29 @@ def test_unknown_keys_are_rejected(tmp_path: Path) -> None:
     path.write_text("retrieval:\n  top_k: 3\n  topk: 4\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="unknown RetrievalConfig keys: topk"):
         load_config(path)
+
+
+def test_unknown_top_level_key_is_rejected(tmp_path: Path) -> None:
+    path = tmp_path / "bad.yaml"
+    path.write_text("eval_k: 3\nnope: true\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="nope"):
+        load_config(path)
+
+
+def test_partial_yaml_keeps_defaults(tmp_path: Path) -> None:
+    path = tmp_path / "partial.yaml"
+    path.write_text("agent:\n  max_steps: 3\n", encoding="utf-8")
+    config = load_config(path)
+    assert config.agent.max_steps == 3
+    assert config.retrieval.top_k == RetrievalConfig().top_k
+
+
+def test_chunk_config_validation() -> None:
+    with pytest.raises(ConfigError):
+        ChunkConfig(mode="paragraph")
+    with pytest.raises(ConfigError):
+        ChunkConfig(size=100, overlap=100)
+    with pytest.raises(ConfigError):
+        ChunkConfig(overlap=-1)
+    with pytest.raises(ConfigError):
+        ChunkConfig(overlap_sentences=9)

@@ -20,3 +20,27 @@ from .config import GroundingConfig
 
 METHOD = "lexical token overlap (heuristic, not entailment)"
 _SOURCES_MARKER = re.compile(r"\bSources?\s*:", re.IGNORECASE)
+
+
+class GroundingError(ValueError):
+    """Raised when the grounding check is called with nothing to check."""
+
+
+@dataclass(frozen=True)
+class ClaimSupport:
+    """One claim and the best evidence found for it."""
+
+    claim: str
+    supported: bool
+    score: float
+    evidence_id: str | None
+    matched_terms: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "claim": self.claim,
+            "supported": self.supported,
+            "score": round(self.score, 4),
+            "evidence_id": self.evidence_id,
+            "matched_terms": list(self.matched_terms),
+        }
