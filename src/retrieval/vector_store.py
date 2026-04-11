@@ -441,3 +441,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2026-04-08T17:14:23]
 
 # Add reranking timeout fallback mechanism [2026-04-08T19:02:27]
+
+# Add query rewrite using LLM for clarity [2026-04-11T17:37:57]
