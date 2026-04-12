@@ -133,3 +133,31 @@ def claim_support(claim: str, chunks: Sequence[Chunk], threshold: float = 0.6) -
         evidence_id=best_id,
         matched_terms=best_matched,
     )
+
+
+def ground_answer(
+    answer: str, chunks: Sequence[Chunk], config: GroundingConfig | None = None
+) -> GroundingReport:
+    """Check every claim of ``answer`` against ``chunks``."""
+    cfg = config or GroundingConfig()
+    if not chunks:
+        raise GroundingError("grounding needs at least one chunk")
+    claims = extract_claims(answer, cfg)
+    supports = tuple(claim_support(claim, chunks, cfg.support_threshold) for claim in claims)
+    return GroundingReport(claims=supports, threshold=cfg.support_threshold)
+
+
+def unsupported_claims(report: GroundingReport) -> list[str]:
+    """The claims that need better evidence (empty when everything is supported)."""
+    return list(report.unsupported)
+
+
+def grounding_summary(report: GroundingReport) -> dict[str, Any]:
+    """Compact numbers for logs and the evaluation report."""
+    return {
+        "claims": len(report.claims),
+        "supported": report.supported_count,
+        "coverage": round(report.coverage, 4),
+        "all_supported": report.all_supported,
+        "method": report.method,
+    }

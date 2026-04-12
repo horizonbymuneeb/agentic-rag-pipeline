@@ -112,3 +112,29 @@ def test_grounding_and_pipeline_validation() -> None:
         PipelineConfig(eval_k=0)
     with pytest.raises(ConfigError):
         PipelineConfig(run_name="")
+
+
+def test_override_helpers_keep_other_fields() -> None:
+    config = default_config()
+    tuned = with_retrieval_overrides(config, top_k=2, candidate_k=4)
+    assert tuned.retrieval.top_k == 2
+    assert tuned.retrieval.rrf_k == config.retrieval.rrf_k
+    assert tuned.agent == config.agent
+    rechunked = with_chunking_overrides(config, mode="fixed", size=200, overlap=20)
+    assert rechunked.chunking.mode == "fixed"
+    assert rechunked.chunking.size == 200
+
+
+def test_sweep_expands_cartesian_product() -> None:
+    configs = sweep_retrieval(default_config(), {"top_k": [3, 5], "rrf_k": [60, 30]})
+    assert len(configs) == 4
+    assert len({config.run_name for config in configs}) == 4
+    assert {config.retrieval.top_k for config in configs} == {3, 5}
+
+
+def test_dump_config_round_trips() -> None:
+    config = default_config()
+    snapshot = dump_config(config)
+    rebuilt = PipelineConfig.from_mapping(snapshot)
+    assert rebuilt == config
+    assert snapshot["retrieval"]["rrf_k"] == 60
