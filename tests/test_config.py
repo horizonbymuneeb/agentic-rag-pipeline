@@ -75,3 +75,40 @@ def test_chunk_config_validation() -> None:
         ChunkConfig(overlap=-1)
     with pytest.raises(ConfigError):
         ChunkConfig(overlap_sentences=9)
+
+
+def test_retrieval_validation() -> None:
+    with pytest.raises(ConfigError):
+        RetrievalConfig(bm25_k1=0.0)
+    with pytest.raises(ConfigError):
+        RetrievalConfig(bm25_b=1.5)
+    with pytest.raises(ConfigError):
+        RetrievalConfig(top_k=10, candidate_k=5)
+    with pytest.raises(ConfigError):
+        RetrievalConfig(bm25_weight=0.0, dense_weight=0.0)
+    with pytest.raises(ConfigError):
+        RetrievalConfig(rrf_k=0)
+
+
+def test_rewrite_and_agent_validation() -> None:
+    with pytest.raises(ConfigError):
+        RewriteConfig(max_rounds=0)
+    with pytest.raises(ConfigError):
+        RewriteConfig(coverage_threshold=1.5)
+    with pytest.raises(ConfigError):
+        RewriteConfig(min_gap_frequency=0)
+    with pytest.raises(ConfigError):
+        AgentConfig(max_steps=0)
+
+
+def test_grounding_and_pipeline_validation() -> None:
+    with pytest.raises(ConfigError):
+        GroundingConfig(support_threshold=2.0)
+    with pytest.raises(ConfigError):
+        GroundingConfig(min_claim_tokens=0)
+    with pytest.raises(ConfigError):
+        PipelineConfig(corpus_seed=-1)
+    with pytest.raises(ConfigError):
+        PipelineConfig(eval_k=0)
+    with pytest.raises(ConfigError):
+        PipelineConfig(run_name="")

@@ -44,3 +44,92 @@ class ClaimSupport:
             "evidence_id": self.evidence_id,
             "matched_terms": list(self.matched_terms),
         }
+
+
+@dataclass(frozen=True)
+class GroundingReport:
+    """All claims of an answer with their support scores."""
+
+    claims: tuple[ClaimSupport, ...]
+    threshold: float
+    method: str = METHOD
+
+    @property
+    def supported_count(self) -> int:
+        """Number of claims above the threshold."""
+        return sum(1 for claim in self.claims if claim.supported)
+
+    @property
+    def unsupported(self) -> tuple[str, ...]:
+        """The claims that failed the check."""
+        return tuple(claim.claim for claim in self.claims if not claim.supported)
+
+    @property
+    def coverage(self) -> float:
+        """Fraction of claims that are supported (``nan``-free: 0.0 when there are none)."""
+        if not self.claims:
+            return 0.0
+        return self.supported_count / len(self.claims)
+
+    @property
+    def all_supported(self) -> bool:
+        """True when every claim is supported."""
+        return bool(self.claims) and self.supported_count == len(self.claims)
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "method": self.method,
+            "threshold": self.threshold,
+            "claims": [claim.as_dict() for claim in self.claims],
+            "supported": self.supported_count,
+            "unsupported": list(self.unsupported),
+            "coverage": round(self.coverage, 4),
+        }
+
+
+def extract_claims(answer: str, config: GroundingConfig | None = None) -> list[str]:
+    """Split an answer into checkable claims.
+
+    The trailing ``Sources: ...`` line is dropped (it is provenance, not a claim),
+    as are sentences with fewer than ``min_claim_tokens`` content tokens.  At most
+    ``max_claims`` claims are kept, in order.
+    """
+    cfg = config or GroundingConfig()
+    if not answer or not answer.strip():
+        raise GroundingError("cannot extract claims from an empty answer")
+    body = _SOURCES_MARKER.split(answer)[0]
+    claims: list[str] = []
+    for sentence in split_sentences(body):
+        if len(tokenize(sentence)) >= cfg.min_claim_tokens:
+            claims.append(sentence)
+        if len(claims) >= cfg.max_claims:
+            break
+    return claims
+
+
+def claim_support(claim: str, chunks: Sequence[Chunk], threshold: float = 0.6) -> ClaimSupport:
+    """Best token-overlap support for one claim across ``chunks``."""
+    if not 0.0 <= threshold <= 1.0:
+        raise GroundingError(f"threshold must be in [0, 1], got {threshold}")
+    claim_terms = tokenize(claim)
+    if not claim_terms:
+        raise GroundingError(f"claim has no content tokens: {claim!r}")
+    claim_set = set(claim_terms)
+    best_score = 0.0
+    best_id: str | None = None
+    best_matched: tuple[str, ...] = ()
+    for chunk in chunks:
+        chunk_terms = set(tokenize(chunk.text))
+        matched = claim_set & chunk_terms
+        score = len(matched) / len(claim_set)
+        if score > best_score:
+            best_score = score
+            best_id = chunk.chunk_id
+            best_matched = tuple(sorted(matched))
+    return ClaimSupport(
+        claim=claim,
+        supported=best_score >= threshold,
+        score=best_score,
+        evidence_id=best_id,
+        matched_terms=best_matched,
+    )
