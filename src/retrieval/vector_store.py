@@ -445,3 +445,5 @@ if __name__ == '__main__':
 # Add query rewrite using LLM for clarity [2026-04-11T17:37:57]
 
 # Optimize embedding batch processing throughput [2026-04-12T11:01:24]
+
+# Add cosine Similarity threshold configuration [2026-04-12T09:54:25]
