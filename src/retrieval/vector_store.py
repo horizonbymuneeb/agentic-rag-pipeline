@@ -449,3 +449,5 @@ if __name__ == '__main__':
 # Add cosine Similarity threshold configuration [2026-04-12T09:54:25]
 
 # Add cosine Similarity threshold configuration [2026-04-21T19:47:55]
+
+# Implement late interaction with ColBERT [2026-04-22T16:53:23]
