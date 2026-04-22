@@ -138,3 +138,10 @@ def test_dump_config_round_trips() -> None:
     rebuilt = PipelineConfig.from_mapping(snapshot)
     assert rebuilt == config
     assert snapshot["retrieval"]["rrf_k"] == 60
+
+
+def test_load_yaml_requires_mapping(tmp_path: Path) -> None:
+    path = tmp_path / "list.yaml"
+    path.write_text("- a\n- b\n", encoding="utf-8")
+    with pytest.raises(ConfigError):
+        load_yaml(path)

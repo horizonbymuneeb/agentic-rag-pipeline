@@ -161,3 +161,24 @@ def grounding_summary(report: GroundingReport) -> dict[str, Any]:
         "all_supported": report.all_supported,
         "method": report.method,
     }
+
+
+def token_support(claim: str, chunk: Chunk) -> float:
+    """Fraction of a claim's content tokens present in one chunk."""
+    claim_terms = set(tokenize(claim))
+    if not claim_terms:
+        raise GroundingError("claim has no content tokens")
+    return len(claim_terms & set(tokenize(chunk.text))) / len(claim_terms)
+
+
+def best_evidence(claim: str, chunks: Sequence[Chunk]) -> tuple[str, float] | None:
+    """Chunk id and score of the best supporting chunk, or ``None`` when nothing matches."""
+    if not chunks:
+        raise GroundingError("grounding needs at least one chunk")
+    scored = sorted(
+        ((token_support(claim, chunk), chunk.chunk_id) for chunk in chunks),
+        key=lambda pair: (-pair[0], pair[1]),
+    )
+    if not scored or scored[0][0] <= 0.0:
+        return None
+    return scored[0][1], scored[0][0]
