@@ -453,3 +453,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2026-04-22T16:53:23]
 
 # Optimize embedding batch processing throughput [2026-04-22T12:03:06]
+
+# Fix duplicate chunk detection logic [2026-04-23T19:17:17]
