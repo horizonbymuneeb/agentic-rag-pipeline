@@ -455,3 +455,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2026-04-22T12:03:06]
 
 # Fix duplicate chunk detection logic [2026-04-23T19:17:17]
+
+# Add query cache with Redis backend [2026-04-24T18:06:58]
