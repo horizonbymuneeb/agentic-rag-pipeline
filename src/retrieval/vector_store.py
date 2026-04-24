@@ -457,3 +457,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2026-04-23T19:17:17]
 
 # Add query cache with Redis backend [2026-04-24T18:06:58]
+
+# Implement evaluation framework for RAG metrics [2026-04-24T16:36:52]
