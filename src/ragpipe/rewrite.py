@@ -208,3 +208,22 @@ def rewrite_once(query: str, chunks: Sequence[Chunk], config: RewriteConfig | No
     rewriter = QueryRewriter(config)
     analysis = rewriter.analyze(query, chunks)
     return rewriter.rewrite(query, analysis)
+
+
+def coverage_of_terms(terms: Sequence[str], chunks: Sequence[Chunk]) -> float:
+    """Fraction of ``terms`` that appear in at least one chunk."""
+    if not terms:
+        raise RewriteError("no terms supplied")
+    present = 0
+    for term in terms:
+        if any(term in chunk.text.lower() for chunk in chunks):
+            present += 1
+    return present / len(terms)
+
+
+def truncate_query(query: str, max_terms: int) -> str:
+    """Keep the first ``max_terms`` tokens of a query (guards against runaway rewrites)."""
+    if max_terms <= 0:
+        raise RewriteError(f"max_terms must be positive, got {max_terms}")
+    terms = query.split()
+    return " ".join(terms[:max_terms])

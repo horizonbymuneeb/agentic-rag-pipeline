@@ -41,3 +41,29 @@ def test_document_helpers() -> None:
     assert document.preview(10).endswith("...")
     assert document.preview(100) == "one two three four"
     assert document.as_dict()["doc_id"] == "d"
+
+
+def test_build_corpus_rejects_bad_seed_and_duplicates() -> None:
+    with pytest.raises(CorpusError):
+        build_corpus(seed=-1)
+    extra = Document(doc_id=SYNTHETIC_PAGES[0][0], title="dup", text="body text")
+    with pytest.raises(CorpusError, match="unique"):
+        build_corpus(extra_documents=[extra])
+
+
+def test_build_corpus_extends_with_caller_documents() -> None:
+    extra = Document(doc_id="custom", title="Custom page", text="custom words about vectors")
+    documents = build_corpus(extra_documents=[extra])
+    assert documents[-1].doc_id == "custom"
+    assert len(documents) == len(SYNTHETIC_PAGES) + 1
+
+
+def test_write_and_load_round_trip(tmp_path: Path) -> None:
+    documents = synthetic_documents()[:2]
+    paths = write_corpus(documents, tmp_path / "corpus")
+    assert len(paths) == 2
+    assert all(path.exists() for path in paths)
+    loaded = load_corpus(tmp_path / "corpus")
+    assert [document.doc_id for document in loaded] == [document.doc_id for document in documents]
+    assert loaded[0].text.startswith("# ")
+    assert loaded[0].title == documents[0].title
