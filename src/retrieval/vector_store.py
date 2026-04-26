@@ -459,3 +459,5 @@ if __name__ == '__main__':
 # Add query cache with Redis backend [2026-04-24T18:06:58]
 
 # Implement evaluation framework for RAG metrics [2026-04-24T16:36:52]
+
+# Implement late interaction with ColBERT [2026-04-26T17:39:26]
