@@ -461,3 +461,5 @@ if __name__ == '__main__':
 # Implement evaluation framework for RAG metrics [2026-04-24T16:36:52]
 
 # Implement late interaction with ColBERT [2026-04-26T17:39:26]
+
+# Implement cross-encoder reranking for better retrieval [2026-04-26T09:00:37]
