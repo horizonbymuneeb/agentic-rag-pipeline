@@ -184,3 +184,55 @@ def make_summarise_tool(chunks: Sequence[Chunk], max_sentences: int = 3) -> Tool
         description="Extract the sentences from the given chunks that best match the query.",
         fn=summarise,
     )
+
+
+def select_sentences(query: str, chunks: Sequence[Chunk], limit: int = 3) -> list[str]:
+    """Rank sentences from ``chunks`` by query-token overlap and return the top ``limit``.
+
+    Ties keep corpus order so the summary is deterministic.  Sentences shorter than
+    four tokens are skipped: they rarely carry an answer and they inflate overlap
+    scores.
+    """
+    if limit <= 0:
+        raise ToolError(f"limit must be positive, got {limit}")
+    query_terms = set(tokenize(query))
+    scored: list[tuple[int, float, str]] = []
+    for chunk_index, chunk in enumerate(chunks):
+        for sentence_index, sentence in enumerate(split_sentences(chunk.text)):
+            terms = set(tokenize(sentence))
+            if len(terms) < 3:
+                continue
+            overlap = len(terms & query_terms) / len(terms)
+            scored.append((chunk_index * 1000 + sentence_index, overlap, sentence))
+    if not scored:
+        return []
+    scored.sort(key=lambda item: (-item[1], item[0]))
+    seen: set[str] = set()
+    out: list[str] = []
+    for _, _, sentence in scored:
+        if sentence in seen:
+            continue
+        seen.add(sentence)
+        out.append(sentence)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def build_default_tools(index: HybridIndex, max_summary_sentences: int = 3) -> ToolRegistry:
+    """The tool set the agent uses: retrieve, lookup and summarise."""
+    registry = ToolRegistry()
+    registry.register(make_retrieve_tool(index))
+    registry.register(make_lookup_tool(index.chunks()))
+    registry.register(make_summarise_tool(index.chunks(), max_summary_sentences))
+    return registry
+
+
+def tool_summary(registry: ToolRegistry) -> dict[str, Any]:
+    """Counts for the CLI's trace printout."""
+    return {
+        "tools": registry.names(),
+        "calls": len(registry.calls),
+        "successful": registry.successful_calls,
+        "failed": len(registry.calls) - registry.successful_calls,
+    }
