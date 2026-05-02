@@ -465,3 +465,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2026-04-26T09:00:37]
 
 # Implement cross-encoder reranking for better retrieval [2026-04-28T15:12:32]
+
+# Add reranking timeout fallback mechanism [2026-05-02T14:59:23]
