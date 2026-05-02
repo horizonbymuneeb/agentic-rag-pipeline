@@ -471,3 +471,5 @@ if __name__ == '__main__':
 # Implement late interaction with ColBERT [2026-05-02T20:48:25]
 
 # Add cosine Similarity threshold configuration [2026-05-02T18:24:19]
+
+# Update Qdrant vector index schema for production [2026-05-02T17:32:38]
