@@ -111,3 +111,76 @@ class ToolRegistry:
     def describe(self) -> dict[str, str]:
         """Tool names mapped to their descriptions, for prompt-like logs."""
         return {name: tool.description for name, tool in self._tools.items()}
+
+
+def make_retrieve_tool(index: HybridIndex, default_k: int = 4) -> Tool:
+    """Build the ``retrieve`` tool over a hybrid index."""
+
+    def retrieve(query: str, k: int | None = None) -> dict[str, Any]:
+        if not query or not query.strip():
+            raise ToolError("retrieve needs a non-empty query")
+        limit = default_k if k is None else int(k)
+        if limit <= 0:
+            raise ToolError(f"k must be positive, got {k}")
+        hits = index.search(query, limit)
+        return {
+            "query": query,
+            "hits": [
+                {
+                    "chunk_id": hit.chunk_id,
+                    "score": round(hit.score, 6),
+                    "sources": list(hit.sources),
+                }
+                for hit in hits
+            ],
+            "chunks": [index.chunk_by_id(hit.chunk_id) for hit in hits],
+        }
+
+    return Tool(
+        name="retrieve",
+        description="Hybrid (BM25 + hashing dense, RRF-fused) retrieval over the chunk corpus.",
+        fn=retrieve,
+    )
+
+
+def make_lookup_tool(chunks: Sequence[Chunk]) -> Tool:
+    """Build the ``lookup`` tool: exact token presence with quoted context."""
+
+    def lookup(term: str, limit: int = 3) -> dict[str, Any]:
+        bare = term.strip().lower()
+        if not bare:
+            raise ToolError("lookup needs a non-empty term")
+        if len(bare.split()) != 1:
+            raise ToolError(f"lookup expects a single term, got {term!r}")
+        matches: list[dict[str, Any]] = []
+        for chunk in chunks:
+            if bare in tokenize(chunk.text):
+                position = chunk.text.lower().find(bare)
+                snippet = chunk.text[max(0, position - 40) : position + 60].replace("\n", " ")
+                matches.append({"chunk_id": chunk.chunk_id, "snippet": snippet})
+        return {"term": bare, "match_count": len(matches), "matches": matches[:limit]}
+
+    return Tool(
+        name="lookup",
+        description="Find an exact term in the corpus and return short snippets.",
+        fn=lookup,
+    )
+
+
+def make_summarise_tool(chunks: Sequence[Chunk], max_sentences: int = 3) -> Tool:
+    """Build the ``summarise`` tool: extractive summary of selected chunks."""
+
+    def summarise(query: str, chunk_ids: Sequence[str]) -> dict[str, Any]:
+        if not chunk_ids:
+            raise ToolError("summarise needs at least one chunk id")
+        wanted = [chunk for chunk in chunks if chunk.chunk_id in set(chunk_ids)]
+        if not wanted:
+            raise ToolError(f"no known chunk ids in {list(chunk_ids)!r}")
+        sentences = select_sentences(query, wanted, max_sentences)
+        return {"chunk_ids": [chunk.chunk_id for chunk in wanted], "sentences": sentences}
+
+    return Tool(
+        name="summarise",
+        description="Extract the sentences from the given chunks that best match the query.",
+        fn=summarise,
+    )
