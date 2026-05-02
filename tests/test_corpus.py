@@ -67,3 +67,42 @@ def test_write_and_load_round_trip(tmp_path: Path) -> None:
     assert [document.doc_id for document in loaded] == [document.doc_id for document in documents]
     assert loaded[0].text.startswith("# ")
     assert loaded[0].title == documents[0].title
+
+
+def test_load_corpus_errors(tmp_path: Path) -> None:
+    with pytest.raises(CorpusError, match="does not exist"):
+        load_corpus(tmp_path / "missing")
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    (empty / "ignored.bin").write_text("binary-ish", encoding="utf-8")
+    with pytest.raises(CorpusError, match="no .txt/.md documents"):
+        load_corpus(empty)
+
+
+def test_corpus_statistics_exact() -> None:
+    documents = [
+        Document(doc_id="a", title="A", text="one two three"),
+        Document(doc_id="b", title="B", text="three four"),
+    ]
+    stats = corpus_statistics(documents)
+    assert stats["documents"] == 2
+    assert stats["total_words"] == 5
+    assert stats["mean_words"] == pytest.approx(2.5)
+    assert stats["min_words"] == 2
+    assert stats["vocabulary"] == 4
+    with pytest.raises(CorpusError):
+        corpus_statistics([])
+
+
+def test_documents_by_id_and_filter() -> None:
+    documents = synthetic_documents()
+    mapping = documents_by_id(documents)
+    assert len(mapping) == 8
+    assert mapping["bm25-scoring"].title.startswith("BM25")
+    with pytest.raises(CorpusError):
+        documents_by_id([documents[0], documents[0]])
+    matching = filter_documents(documents, ["saturation"])
+    assert len(matching) == 1
+    assert matching[0].doc_id == "bm25-scoring"
+    with pytest.raises(CorpusError):
+        filter_documents(documents, [])
