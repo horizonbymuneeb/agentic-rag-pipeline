@@ -469,3 +469,5 @@ if __name__ == '__main__':
 # Add reranking timeout fallback mechanism [2026-05-02T14:59:23]
 
 # Implement late interaction with ColBERT [2026-05-02T20:48:25]
+
+# Add cosine Similarity threshold configuration [2026-05-02T18:24:19]
