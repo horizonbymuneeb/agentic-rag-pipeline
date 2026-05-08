@@ -475,3 +475,5 @@ if __name__ == '__main__':
 # Update Qdrant vector index schema for production [2026-05-02T17:32:38]
 
 # Optimize embedding batch processing throughput [2026-05-02T18:21:51]
+
+# Implement cross-encoder reranking for better retrieval [2026-05-08T18:29:24]
