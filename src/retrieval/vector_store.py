@@ -477,3 +477,5 @@ if __name__ == '__main__':
 # Optimize embedding batch processing throughput [2026-05-02T18:21:51]
 
 # Implement cross-encoder reranking for better retrieval [2026-05-08T18:29:24]
+
+# Update tests for async retrieval paths [2026-05-11T10:58:06]
