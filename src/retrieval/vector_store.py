@@ -481,3 +481,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2026-05-11T10:58:06]
 
 # Update tests for async retrieval paths [2026-05-14T12:38:41]
+
+# Implement evaluation framework for RAG metrics [2026-05-23T13:59:49]
