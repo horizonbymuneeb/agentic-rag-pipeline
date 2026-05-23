@@ -78,3 +78,60 @@ def test_evaluate_retrieval_bounds(hybrid_index: HybridIndex, corpus_chunks) -> 
     assert summary["mean_recall"] >= 0.5
     with pytest.raises(EvaluationError):
         evaluate_retrieval(hybrid_index, [], k=5)
+
+
+def test_evaluate_answers_returns_traces(hybrid_index: HybridIndex, corpus_chunks, pipeline_config) -> None:
+    questions = build_eval_set(corpus_chunks)[:3]
+    agent = RAGAgent(hybrid_index, pipeline_config)
+    traces, coverages = evaluate_answers(agent, questions, k=3)
+    assert len(traces) == 3
+    assert len(coverages) == 3
+    assert all(0.0 <= value <= 1.0 for value in coverages)
+    with pytest.raises(EvaluationError):
+        evaluate_answers(agent, [], k=3)
+
+
+def test_evaluate_pipeline_report(hybrid_index: HybridIndex, corpus_chunks, pipeline_config) -> None:
+    questions = build_eval_set(corpus_chunks)
+    agent = RAGAgent(hybrid_index, pipeline_config)
+    report = evaluate_pipeline(hybrid_index, agent, questions, k=5)
+    assert isinstance(report, EvalResult)
+    assert report.k == 5
+    assert len(report.questions) == 16
+    assert len(report.recalls) == len(report.coverages) == 16
+    assert 0.0 <= report.mean_recall <= 1.0
+    assert 0.0 <= report.mean_coverage <= 1.0
+    # measured on this corpus; the floor is deliberately below the observed value
+    assert report.mean_recall >= 0.8
+    assert report.mean_coverage >= 0.7
+    assert report.perfect_recall_count >= 8
+    payload = report.as_dict()
+    assert payload["method"] == METHOD
+    assert payload["questions"] == 16
+    assert len(payload["per_question"]) == 16
+    assert set(payload["per_question"][0]) == {"question", "doc_id", "recall", "coverage"}
+
+
+def test_evaluate_pipeline_validation(hybrid_index: HybridIndex, pipeline_config) -> None:
+    agent = RAGAgent(hybrid_index, pipeline_config)
+    with pytest.raises(EvaluationError):
+        evaluate_pipeline(hybrid_index, agent, [], k=5)
+
+
+def test_evaluate_corpus_wrapper(documents, corpus_chunks, hybrid_index: HybridIndex, pipeline_config) -> None:
+    agent = RAGAgent(hybrid_index, pipeline_config)
+    report = evaluate_corpus(documents, corpus_chunks, hybrid_index, agent, k=3)
+    assert report.k == 3
+    assert len(report.questions) == 16
+    with pytest.raises(EvaluationError):
+        evaluate_corpus([], corpus_chunks, hybrid_index, agent, k=3)
+
+
+def test_eval_result_aggregates() -> None:
+    from src.ragpipe.evaluation import EvalQuestion
+
+    question = EvalQuestion(question="q", doc_id="d", expected_terms=("a",), gold_chunk_ids=("c",))
+    result = EvalResult(k=3, questions=(question, question), recalls=(1.0, 0.0), coverages=(0.5, 1.0))
+    assert result.mean_recall == pytest.approx(0.5)
+    assert result.mean_coverage == pytest.approx(0.75)
+    assert result.perfect_recall_count == 1
