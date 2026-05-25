@@ -483,3 +483,5 @@ if __name__ == '__main__':
 # Update tests for async retrieval paths [2026-05-14T12:38:41]
 
 # Implement evaluation framework for RAG metrics [2026-05-23T13:59:49]
+
+# Implement cross-encoder reranking for better retrieval [2026-05-25T13:32:28]
