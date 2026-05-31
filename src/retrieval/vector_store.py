@@ -487,3 +487,5 @@ if __name__ == '__main__':
 # Implement cross-encoder reranking for better retrieval [2026-05-25T13:32:28]
 
 # Fix chunk overlap logic for markdown parser [2026-05-25T09:44:04]
+
+# Add cosine Similarity threshold configuration [2026-05-31T18:25:17]
