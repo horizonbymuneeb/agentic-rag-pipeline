@@ -89,3 +89,38 @@ def test_hybrid_index_search(hybrid_index: HybridIndex) -> None:
     assert hits[0].chunk_id.startswith("rank-fusion") or "rank" in hits[0].chunk_id
     assert [item.rank for item in hits] == list(range(1, len(hits) + 1))
     assert all(hybrid_index.chunk_by_id(item.chunk_id) for item in hits)
+
+
+def test_hybrid_index_sources_and_stats(hybrid_index: HybridIndex) -> None:
+    lexical = hybrid_index.lexical_hits("bm25 saturation", k=3)
+    dense = hybrid_index.dense_hits("bm25 saturation", k=3)
+    assert all(item.source == "bm25" for item in lexical)
+    assert all(item.source == "dense" for item in dense)
+    stats = hybrid_index.stats()
+    assert stats["chunks"] == len(hybrid_index)
+    assert stats["rrf_k"] == 60
+    assert stats["bm25"]["documents"] == stats["dense"]["documents"]
+
+
+def test_hybrid_source_agreement(hybrid_index: HybridIndex) -> None:
+    agreement = hybrid_index.source_agreement("term frequency saturation", k=3)
+    assert set(agreement) == {"query", "lexical_only", "dense_only", "shared", "jaccard"}
+    assert 0.0 <= agreement["jaccard"] <= 1.0
+    assert set(agreement["shared"]) <= set(agreement["lexical_only"]) | set(agreement["dense_only"]) | set(agreement["shared"])
+
+
+def test_hybrid_index_validation() -> None:
+    with pytest.raises(FusionError, match="zero chunks"):
+        HybridIndex().build([])
+    empty = HybridIndex()
+    with pytest.raises(FusionError, match="call build"):
+        empty.search("anything")
+    with pytest.raises(FusionError):
+        HybridIndex.from_chunks([], None)
+
+
+def test_hybrid_index_respects_config_weights(chunks) -> None:
+    lexical_only = HybridIndex(RetrievalConfig(dense_weight=0.0)).build(chunks)
+    hits = lexical_only.search("reciprocal rank fusion", k=3)
+    assert len(hits) == 3
+    assert all(item.source_ranks.keys() <= {"list0", "list1"} for item in hits)
