@@ -176,3 +176,4 @@
 [2026-05-25T13:32:28] Implement cross-encoder reranking for better retrieval
 [2026-05-25T09:44:04] Fix chunk overlap logic for markdown parser
 [2026-05-31T18:25:17] Add cosine Similarity threshold configuration
+[2026-06-01T10:52:28] Fix duplicate chunk detection logic

@@ -489,3 +489,5 @@ if __name__ == '__main__':
 # Fix chunk overlap logic for markdown parser [2026-05-25T09:44:04]
 
 # Add cosine Similarity threshold configuration [2026-05-31T18:25:17]
+
+# Fix duplicate chunk detection logic [2026-06-01T10:52:28]
