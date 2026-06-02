@@ -493,3 +493,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2026-06-01T10:52:28]
 
 # Fix connection pool timeout handling [2026-06-02T16:40:41]
+
+# Implement parent-child document chunk linking [2026-06-02T13:01:51]
