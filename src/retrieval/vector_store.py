@@ -495,3 +495,5 @@ if __name__ == '__main__':
 # Fix connection pool timeout handling [2026-06-02T16:40:41]
 
 # Implement parent-child document chunk linking [2026-06-02T13:01:51]
+
+# Optimize embedding batch processing throughput [2026-06-02T10:15:24]
