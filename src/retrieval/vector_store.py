@@ -497,3 +497,5 @@ if __name__ == '__main__':
 # Implement parent-child document chunk linking [2026-06-02T13:01:51]
 
 # Optimize embedding batch processing throughput [2026-06-02T10:15:24]
+
+# Fix duplicate chunk detection logic [2026-06-04T17:30:36]
