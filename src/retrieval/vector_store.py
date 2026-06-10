@@ -501,3 +501,5 @@ if __name__ == '__main__':
 # Fix duplicate chunk detection logic [2026-06-04T17:30:36]
 
 # Add query cache with Redis backend [2026-06-07T15:20:21]
+
+# Implement cross-encoder reranking for better retrieval [2026-06-10T16:36:22]
