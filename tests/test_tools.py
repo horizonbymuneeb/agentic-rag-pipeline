@@ -109,3 +109,33 @@ def test_summarise_tool_returns_sentences() -> None:
     assert result.payload["chunk_ids"] == ["c0"]
     assert len(result.payload["sentences"]) <= 2
     assert all(isinstance(sentence, str) for sentence in result.payload["sentences"])
+
+
+def test_summarise_tool_validation() -> None:
+    tool = make_summarise_tool([chunk(0, "alpha beta gamma")])
+    assert tool.call(query="alpha", chunk_ids=[]).ok is False
+    assert tool.call(query="alpha", chunk_ids=["missing"]).ok is False
+
+
+def test_select_sentences_skips_short_and_is_deterministic() -> None:
+    chunks = [chunk(0, "Too short. BM25 saturates term frequency with the k1 parameter. Another longer sentence about length normalisation here.")]
+    selected = select_sentences("what does k1 control", chunks, limit=2)
+    assert selected[0].startswith("BM25 saturates")
+    assert select_sentences("what does k1 control", chunks, limit=2) == selected
+    with pytest.raises(ToolError):
+        select_sentences("alpha", chunks, limit=0)
+
+
+def test_build_default_tools_and_summary(hybrid_index: HybridIndex) -> None:
+    registry = build_default_tools(hybrid_index, max_summary_sentences=2)
+    assert registry.names() == ["retrieve", "lookup", "summarise"]
+    registry.call("lookup", term="rrf")
+    summary = tool_summary(registry)
+    assert summary["tools"] == ["retrieve", "lookup", "summarise"]
+    assert summary["calls"] == 1
+    assert summary["failed"] + summary["successful"] == 1
+
+
+def test_tool_result_serialises() -> None:
+    result = ToolResult(name="t", ok=True, payload={"a": 1}, message="fine")
+    assert result.as_dict() == {"name": "t", "ok": True, "message": "fine", "payload": {"a": 1}}
